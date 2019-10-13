@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2.ArithmeticOperations", "2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3.GenerationOfArray", "3.GenerationOfArray\3.GenerationOfArray.csproj", "{68B360F1-F2F5-4247-B555-274BC1E3323C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4.SortOfArray", "4.SortOfArray\4.SortOfArray.csproj", "{1C842CBC-D749-4017-B22A-5412D0520AD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{68B360F1-F2F5-4247-B555-274BC1E3323C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68B360F1-F2F5-4247-B555-274BC1E3323C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68B360F1-F2F5-4247-B555-274BC1E3323C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C842CBC-D749-4017-B22A-5412D0520AD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C842CBC-D749-4017-B22A-5412D0520AD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C842CBC-D749-4017-B22A-5412D0520AD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C842CBC-D749-4017-B22A-5412D0520AD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
