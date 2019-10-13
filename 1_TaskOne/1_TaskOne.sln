@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "1.HelloWorld", "1.HelloWorl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2.ArithmeticOperations", "2.ArithmeticOperations\2.ArithmeticOperations.csproj", "{070032A4-F8DA-4231-AB74-810000C7EB30}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3.GenerationOfArray", "3.GenerationOfArray\3.GenerationOfArray.csproj", "{68B360F1-F2F5-4247-B555-274BC1E3323C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{070032A4-F8DA-4231-AB74-810000C7EB30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{070032A4-F8DA-4231-AB74-810000C7EB30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{070032A4-F8DA-4231-AB74-810000C7EB30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68B360F1-F2F5-4247-B555-274BC1E3323C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68B360F1-F2F5-4247-B555-274BC1E3323C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68B360F1-F2F5-4247-B555-274BC1E3323C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68B360F1-F2F5-4247-B555-274BC1E3323C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
