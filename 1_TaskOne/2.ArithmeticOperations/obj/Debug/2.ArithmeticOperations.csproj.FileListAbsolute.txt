@@ -1,0 +1,6 @@
+C:\Users\NIK\Desktop\WEB_third_term\1_TaskOne\2.ArithmeticOperations\bin\Debug\2.ArithmeticOperations.exe.config
+C:\Users\NIK\Desktop\WEB_third_term\1_TaskOne\2.ArithmeticOperations\bin\Debug\2.ArithmeticOperations.exe
+C:\Users\NIK\Desktop\WEB_third_term\1_TaskOne\2.ArithmeticOperations\bin\Debug\2.ArithmeticOperations.pdb
+C:\Users\NIK\Desktop\WEB_third_term\1_TaskOne\2.ArithmeticOperations\obj\Debug\2.ArithmeticOperations.csprojAssemblyReference.cache
+C:\Users\NIK\Desktop\WEB_third_term\1_TaskOne\2.ArithmeticOperations\obj\Debug\2.ArithmeticOperations.exe
+C:\Users\NIK\Desktop\WEB_third_term\1_TaskOne\2.ArithmeticOperations\obj\Debug\2.ArithmeticOperations.pdb
