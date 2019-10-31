@@ -90,13 +90,13 @@ namespace _2_TaskTwo
                 }
             }
 
-            public bool addAppointment(ref string error, Patient patient, int doctorId = -1, int day = 0, int time = 0)
+            public bool addAppointment(ref string error, Patient patient, int doctorId = -1, DateTime date = new DateTime(), int time = 0)
             {
-                if (day != 0 && time == 0 || day == 0 && time != 0)
+                /*if ((date.Day == 0 || date.Month == 0 || time == 0) && !(date.Day == 0 && date.Month == 0 && time == 0))
                 {
-                    error = "you must enter day and time or nothing of them";
+                    error = "you must enter date.Day and time or nothing of them";
                     return false;
-                }
+                }*/
 
                 if (doctorId == -1)
                 {
@@ -112,15 +112,14 @@ namespace _2_TaskTwo
                     return false;
                 }
 
-                if (day != 0 && time != 0)
+                if (date.Day != 0 && time != 0 && date.Month != 0)
                 {
-                    if (day < firstDay.Day || day > lastDay.Day || time < 9 || time > 19)
+                    if (date < firstDay || date > lastDay || time < 9 || time > 19)
                     {
                         error = "incorrect date";
                         return false;
                     }
 
-                    DateTime date = DateTime.Parse(DateTime.Today.Year.ToString() + DateTime.Today.Month.ToString() + day);
                     if (!appointments[date][doctorId].ContainsKey(time))
                     {
                         appointments[date][doctorId][time] = patient.id;
@@ -134,7 +133,7 @@ namespace _2_TaskTwo
                     }
                 }
 
-                if (day == 0 && time == 0)
+                if (date == new DateTime())
                 {
                     DateTime currentDay = firstDay;
                     while (currentDay != lastDay)
@@ -153,7 +152,6 @@ namespace _2_TaskTwo
                     error = "no free time";
                     return false;
                 }
-
                 return false;
             }
 
@@ -177,9 +175,15 @@ namespace _2_TaskTwo
 
             Patient leaf = new Patient(1);
             string error = "";
-            rep.addAppointment(ref error, leaf, 1);
+            if (!rep.addAppointment(ref error, leaf, 1))
+                Console.WriteLine("Not ok 1");
 
-            Console.WriteLine("Ok");
+            Patient leafi = new Patient(0);
+            //if (!rep.addAppointment(ref error, leafi, 1, 11, 1, 16))
+            if (!rep.addAppointment(ref error, leafi, 1, new DateTime(2019, 11, 1), 16))
+                Console.WriteLine("Not ok 2");
+
+            Console.WriteLine("End");
         }
     }
 }
