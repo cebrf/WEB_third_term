@@ -47,7 +47,7 @@ namespace _2_TaskTwo
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    addDoctor(i, "smth");
+                    addDoctor(i, i % therapyArea.Count);
                 }
 
                 DateTime currentDay = DateTime.Today;
@@ -58,17 +58,21 @@ namespace _2_TaskTwo
                 }
             }
 
-            void addDoctor(int id, string therapyArea = "")
+            void addDoctor(int id, int therapyAreaId = -1)
             {
-                if (therapyArea == "")
+                if (therapyAreaId == -1)
                 {
                     Therapist newTherapist = new Therapist(id);
                     doctors.Add(newTherapist);
                 }
-                else //TODO хранить все специальности в списке и проверять соответствует ли вводимое тому, что есть в списке
+                else if (therapyAreaId >= 0 && therapyAreaId < therapyArea.Count)
                 {
-                    Specialist newSpecialist = new Specialist(id, therapyArea);
+                    Specialist newSpecialist = new Specialist(id, therapyArea[therapyAreaId]);
                     doctors.Add(newSpecialist);
+                }
+                else
+                {
+                    // TODO throw exception
                 }
 
                 doctorsNumber++;
@@ -76,11 +80,6 @@ namespace _2_TaskTwo
 
             void addDay(DateTime newDay)
             {
-                /*if (firstDay != lastDay)
-                {
-                    //firstDay = firstDay.AddDays(1);
-                    lastDay = lastDay.AddDays(1);
-                }*/
                 lastDay = lastDay.AddDays(1);
 
                 appointments[newDay] = new List<Dictionary<int, int>>();
@@ -160,7 +159,15 @@ namespace _2_TaskTwo
             int doctorsNumber = 0;
             List<Doctor> doctors = new List<Doctor>();
             List<Patient> patients = new List<Patient>();
-            
+            List<string> therapyArea = new List<string>()
+            {
+                "Pulmonologist",
+                "Surgeon",
+                "Rheumatologist",
+                "Neurologist",
+            };
+
+
             //день: { { id доктора, словарь записей на прием (время приема, id пациента) }, { ... }, { ... }, ... }
             //время приема целое число часов, с 9 до 19 в формате чч:00
             Dictionary<DateTime, List<Dictionary<int, int>>> appointments = new Dictionary<DateTime, List<Dictionary<int, int>>>();
@@ -179,7 +186,6 @@ namespace _2_TaskTwo
                 Console.WriteLine("Not ok 1");
 
             Patient leafi = new Patient(0);
-            //if (!rep.addAppointment(ref error, leafi, 1, 11, 1, 16))
             if (!rep.addAppointment(ref error, leafi, 1, new DateTime(2019, 11, 1), 16))
                 Console.WriteLine("Not ok 2");
 
