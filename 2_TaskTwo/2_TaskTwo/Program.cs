@@ -1,0 +1,109 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace _2_TaskTwo
+{
+    class Program
+    {
+        public class Patient
+        {
+            public Patient(int id, 
+                string name, 
+                string secondName)
+            {
+                this.id = id;
+                this.name = name;
+                this.secondName = secondName;
+            }
+            public int id;
+            public string name;
+            public string secondName;
+        }
+
+        public class Doctor
+        {
+            public Doctor(int id)
+            {
+                this.id = id;
+            }
+            public int id;
+        }
+
+        public class Therapist : Doctor
+        {
+            public Therapist(int id) : base(id)
+            {
+
+            }
+        }
+
+        public class Specialist : Doctor
+        {
+            public Specialist(int id, string therapyArea) : base(id)
+            {
+                this.therapyArea = therapyArea;
+            }
+            string therapyArea;
+        }
+
+
+        public class Reception
+        {
+            public Reception()
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    addDoctor(i, "smth");
+                }
+
+                DateTime currentDay = DateTime.Today;
+                for (int i = 0; i < 10; i++)
+                {
+                    addDay(currentDay);
+                    currentDay = currentDay.AddDays(1);
+                }
+            }
+
+            void addDoctor(int id, string therapyArea = "")
+            {
+                if (therapyArea == "")
+                {
+                    Therapist newTherapist = new Therapist(id);
+                    doctors.Add(newTherapist);
+                }
+                else //TODO хранить все специальности в списке и проверять соответствует ли вводимое тому, что есть в списке
+                {
+                    Specialist newSpecialist = new Specialist(id, therapyArea);
+                    doctors.Add(newSpecialist);
+                }
+
+                doctorsNumber++;
+            }
+
+            void addDay(DateTime newDay)
+            {
+                appointments[newDay] = new List<Dictionary<int, int>>();
+                for (int i = 0; i < doctorsNumber; i++)
+                {
+                    appointments[newDay].Add(new Dictionary<int, int>());
+                }
+            }
+
+            int doctorsNumber = 0;
+            List<Doctor> doctors = new List<Doctor>();
+            List<Patient> patients = new List<Patient>();
+            
+            //день: { { id доктора, словарь записей на прием (время приема, id пациента) }, { ... }, { ... }, ... }
+            //время приема целое число часов, с 9 до 19 в формате чч:00
+            Dictionary<DateTime, List<Dictionary<int, int>>> appointments = new Dictionary<DateTime, List<Dictionary<int, int>>>();
+        }
+
+
+
+        static void Main(string[] args)
+        {
+            Reception rep = new Reception();
+            Console.WriteLine("uru uru");
+        }
+    }
+}
