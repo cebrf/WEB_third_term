@@ -5,49 +5,61 @@ namespace _2_TaskTwo
 {
     class Program
     {
-        public class Patient
+        class Patient
         {
-            public Patient(int id)
+            internal Patient(int id)
             {
                 this.id = id;
             }
-            public int id;
+            internal int id;
         }
 
-        public class Doctor
+        class Doctor
         {
-            public Doctor(int id)
+            internal Doctor(int id = -1)
             {
                 this.id = id;
             }
-            public int id;
+            internal int id;
         }
 
-        public class Therapist : Doctor
+        class Therapist : Doctor
         {
-            public Therapist(int id) : base(id)
+            internal Therapist(int id) : base(id)
             {
 
             }
         }
 
-        public class Specialist : Doctor
+        class Specialist : Doctor
         {
-            public Specialist(int id, string therapyArea) : base(id)
+            internal Specialist(int id, string therapyAreas) : base(id)
             {
-                this.therapyArea = therapyArea;
+                this.therapyAreas = therapyAreas;
             }
-            string therapyArea;
+            string therapyAreas;
         }
 
 
-        public class Reception
+
+        class Reception
         {
-            public Reception()
+            internal Reception() { }
+            internal Reception(ref Reception rhs)
+            {
+                this.firstDay = rhs.firstDay;
+                this.lastDay = rhs.lastDay;
+                this.doctorsNumber = rhs.doctorsNumber;
+                this.doctors = rhs.doctors;
+                this.patients = rhs.patients;
+                this.therapyAreas = rhs.therapyAreas;
+                this.appointments = rhs.appointments;
+            }
+            internal bool CreateNewModel()
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    addDoctor(i, i % therapyArea.Count);
+                    addDoctor(i, i % therapyAreas.Count);
                 }
 
                 DateTime currentDay = DateTime.Today;
@@ -56,18 +68,24 @@ namespace _2_TaskTwo
                     addDay(currentDay);
                     currentDay = currentDay.AddDays(1);
                 }
+
+                return true;
             }
 
-            void addDoctor(int id, int therapyAreaId = -1)
+            protected void addDoctor(int id = -1, int therapyAreaId = -1) // TODO принимает тип Doctor
             {
+                if (id == -1)
+                {
+                    id = doctors.Count;
+                }
                 if (therapyAreaId == -1)
                 {
                     Therapist newTherapist = new Therapist(id);
                     doctors.Add(newTherapist);
                 }
-                else if (therapyAreaId >= 0 && therapyAreaId < therapyArea.Count)
+                else if (therapyAreaId >= 0 && therapyAreaId < therapyAreas.Count)
                 {
-                    Specialist newSpecialist = new Specialist(id, therapyArea[therapyAreaId]);
+                    Specialist newSpecialist = new Specialist(id, therapyAreas[therapyAreaId]);
                     doctors.Add(newSpecialist);
                 }
                 else
@@ -89,7 +107,7 @@ namespace _2_TaskTwo
                 }
             }
 
-            public bool addAppointment(ref string error, Patient patient, int doctorId = -1, DateTime date = new DateTime(), int time = 0)
+            internal bool addAppointment(ref string error, Patient patient, int doctorId = -1, DateTime date = new DateTime(), int time = 0)
             {
                 /*if ((date.Day == 0 || date.Month == 0 || time == 0) && !(date.Day == 0 && date.Month == 0 && time == 0))
                 {
@@ -156,10 +174,10 @@ namespace _2_TaskTwo
 
             DateTime firstDay = DateTime.Today;
             DateTime lastDay = DateTime.Today;
-            int doctorsNumber = 0;
-            List<Doctor> doctors = new List<Doctor>();
+            protected int doctorsNumber = 0;
+            protected List<Doctor> doctors = new List<Doctor>();
             List<Patient> patients = new List<Patient>();
-            List<string> therapyArea = new List<string>()
+            protected List<string> therapyAreas = new List<string>()
             {
                 "Pulmonologist",
                 "Surgeon",
@@ -173,12 +191,94 @@ namespace _2_TaskTwo
             Dictionary<DateTime, List<Dictionary<int, int>>> appointments = new Dictionary<DateTime, List<Dictionary<int, int>>>();
         }
 
+        class ManagerOfDoctors : Reception
+        {
+            internal ManagerOfDoctors() { }
+            internal ManagerOfDoctors(ref Reception rhs) : base(ref rhs) { }
+            internal void AddDoctor(int id, int therapyAreaId = -1)
+            {
+                ;
+            }
+
+            internal bool GetDoctorById(int id, ref Doctor outVal)
+            {
+                return false;
+            }
+
+            internal bool GetDoctorsByTherapyAreaId (int id, ref List<Doctor> outVal)
+            {
+                return true;
+            }
+
+            internal bool DeleteDoctor (int id)
+            {
+                return true;
+            }
+
+            internal bool ChangeDoctor (int id /* smth */)
+            {
+                return true;
+            }
+        }
+
+
+
+
+        /*internal class A
+        {
+            internal A() { }
+            internal A(ref A rhs)
+            {
+                this.a = rhs.a;
+            }
+            internal void changeA()
+            {
+                a = 13;
+            }
+            protected int a = 0;
+
+            internal class C
+            {
+                internal C(int a)
+                {
+                    this.a = a;
+                }
+                int a;
+                internal void returnA()
+                {
+
+                    Console.WriteLine(a);
+                }
+            }
+        }
+
+        internal class B : A
+        {
+            internal B() { }
+            internal B(ref A rhs) : base(ref rhs) { }
+            internal void returnA()
+            {
+
+                Console.WriteLine(a);
+            }
+        }*/
 
 
         static void Main(string[] args)
         {
+            /*A mai = new A();
+            mai.changeA();
+            B unluck = new B();
+            B luck = new B(ref mai);
+
+            unluck.returnA();
+            luck.returnA();*/
+
+
+
             Reception rep = new Reception();
-            Console.WriteLine("uru uru");
+            if (rep.CreateNewModel())
+                Console.WriteLine("new model created");
 
             Patient leaf = new Patient(1);
             string error = "";
@@ -188,6 +288,14 @@ namespace _2_TaskTwo
             Patient leafi = new Patient(0);
             if (!rep.addAppointment(ref error, leafi, 1, new DateTime(2019, 11, 1), 16))
                 Console.WriteLine("Not ok 2");
+
+            
+            ManagerOfDoctors manager = new ManagerOfDoctors(ref rep);
+            Doctor doc = new Doctor();
+            if (manager.GetDoctorById(0, ref doc))
+                Console.WriteLine(doc.id);
+            else
+                Console.WriteLine("Not ok 3");
 
             Console.WriteLine("End");
         }
