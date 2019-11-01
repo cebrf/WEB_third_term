@@ -112,7 +112,7 @@ namespace _2_TaskTwo
                 }
             }
 
-            internal bool addAppointment(ref string error, Patient patient, int doctorId = -1, DateTime date = new DateTime(), int time = 0)
+            internal bool addAppointment_(ref string error, Patient patient, int doctorId = -1, DateTime date = new DateTime(), int time = 0)
             {
                 if (doctorId == -1)
                 {
@@ -160,7 +160,7 @@ namespace _2_TaskTwo
                             if (!appointments[currentDay][doctorId].ContainsKey(i))
                             {
                                 appointments[currentDay][doctorId][i] = patient.id;
-                                
+
                                 patients.Add(patient);
                                 return true;
                             }
@@ -172,10 +172,36 @@ namespace _2_TaskTwo
                 return false;
             }
 
-            DateTime firstDay = DateTime.Today;
-            DateTime lastDay = DateTime.Today;
+            protected bool addAppointment(Patient patient, int doctorId)
+            {
+                DateTime currentDay = firstDay;
+                while (currentDay != lastDay)
+                {
+                    for (int i = 9; i < 19; i++)
+                    {
+                        if (!appointments[currentDay][doctorId].ContainsKey(i))
+                        {
+                            appointments[currentDay][doctorId][i] = patient.id;
+
+                            patients.Add(patient);
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            protected bool addAppointment(Patient patient, int doctorId, DateTime dateTime)
+            {
+                appointments[dateTime.Date][doctorId][dateTime.Hour] = patient.id;
+                patients.Add(patient);
+                return true;
+            }
+
+            protected DateTime firstDay = DateTime.Today;
+            protected DateTime lastDay = DateTime.Today;
             protected Dictionary<int, Doctor> doctors = new Dictionary<int, Doctor>();
-            List<Patient> patients = new List<Patient>();
+            protected List<Patient> patients = new List<Patient>();
             protected List<string> therapyAreas;
 
 
@@ -188,9 +214,18 @@ namespace _2_TaskTwo
         {
             internal ManagerOfDoctors() { }
             internal ManagerOfDoctors(ref Reception rhs) : base(ref rhs) { }
-            internal void AddDoctor(int id, int therapyAreaId = -1)
+            internal bool AddDoctor(int id, int therapyAreaId = -1)
             {
-                this.addDoctor(id, therapyAreaId);
+                if (!doctors.ContainsKey(id))
+                {
+                    this.addDoctor(id, therapyAreaId);
+                    return true;
+                }
+                else
+                {
+                    //TODO exception
+                    return false;
+                }
             }
 
             internal bool GetDoctorById(int id, ref Doctor outVal)
@@ -260,6 +295,152 @@ namespace _2_TaskTwo
             }
         }
 
+        class ManagerOfAppointments : Reception
+        {
+            internal ManagerOfAppointments() { }
+            internal ManagerOfAppointments(ref Reception rhs) : base(ref rhs) { }
+
+            internal bool AddAppointment(Patient patient, int doctorId = -1, DateTime dateTime = new DateTime())
+            {
+                if (!doctors.ContainsKey(doctorId))
+                {
+                    //TODO throw exception: no such doctor
+                    return false;
+                }
+
+                if (doctorId == -1)
+                {
+                    foreach (KeyValuePair<int, Doctor> doc in doctors)
+                    {
+                        if (doc.Value is Therapist)
+                            doctorId = doc.Value.id;
+                    }
+                }
+                if (doctorId == -1)
+                {
+                    //TODO throw exception: no Therapist in that hospital
+                    return false;
+                }
+
+                if (dateTime == new DateTime())
+                {
+                    // время записи не известно - записываем в первое попавшееся время. Полагаем, что пациенту все равно
+                    if (!addAppointment(patient, doctorId))
+                    {
+                        //TODO exception "no free time";
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (dateTime.Date >= firstDay.Date && dateTime.Date <= lastDay.Date && dateTime.Hour >= 9 && dateTime.Hour <= 19)
+                    {
+                        if (addAppointment(patient, doctorId, dateTime))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            //TODO запись занята
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        //TODO exception "incorrect date";
+                        return false;
+                    }
+                }
+                return true;
+            }
+        
+            internal bool GetAppointmentsForDay(DateTime dateTime, ref Dictionary<int, Dictionary<int, int>> outVal)
+            {
+                if (appointments.ContainsKey(dateTime.Date))
+                {
+                    outVal = appointments[dateTime.Date];
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            internal bool GetAppointmentsForDoctor(int id, ref Dictionary<DateTime, Dictionary<int, int>> outVal)
+            {
+                if (doctors.ContainsKey(id))
+                {
+                    foreach (KeyValuePair<DateTime, Dictionary<int, Dictionary<int, int>>> day in appointments)
+                    {
+                        outVal[day.Key] = day.Value[id];
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            internal bool GetPatient(DateTime dateTime, int doctorId, ref int outVal)
+            {
+                if (!doctors.ContainsKey(doctorId))
+                {
+                    //TODO error: no such doctor
+                    return false;
+                }
+                if (!(dateTime.Date >= firstDay.Date && dateTime.Date <= lastDay.Date && dateTime.Hour >= 9 && dateTime.Hour <= 19))
+                {
+                    //TODO incorrect dateTime
+                    return false;
+                }
+
+                if (appointments[dateTime.Date][doctorId].ContainsKey(dateTime.Hour))
+                {
+                    outVal = appointments[dateTime.Date][doctorId][dateTime.Hour];
+                    return true;
+                }
+                else
+                {
+                    //TODO no such appointment
+                    return false;
+                }
+            }
+
+            internal bool DeleteAppointment(DateTime dateTime, int doctorId)
+            {
+                int patientId = 0;
+                if (GetPatient(dateTime, doctorId, ref patientId))
+                {
+                    appointments[dateTime.Date][doctorId].Remove(dateTime.Hour);
+                    patients.RemoveAt(patientId);
+                    return true;
+                }
+                else
+                {
+                    //TODO no such Appointment
+                    return false;
+                }
+            }
+        
+            internal bool ChangeAppointment(DateTime prevDateTime, int doctorId, DateTime newDateTime)
+            {
+                int patientId = -1;
+                if (GetPatient(prevDateTime, doctorId, ref patientId))
+                {
+                    if (DeleteAppointment(prevDateTime, doctorId))
+                    {
+                        if (AddAppointment(patients[patientId], doctorId, newDateTime))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
         static void Main(string[] args)
         {
             Reception rep = new Reception();
@@ -267,15 +448,23 @@ namespace _2_TaskTwo
                 Console.WriteLine("new model created");
 
             Patient leaf = new Patient(1);
-            string error = "";
+            Patient leafi = new Patient(0);
+            /*string error = "";
             if (!rep.addAppointment(ref error, leaf, 1))
                 Console.WriteLine("Not ok 1");
 
             Patient leafi = new Patient(0);
             if (!rep.addAppointment(ref error, leafi, 1, new DateTime(2019, 11, 1), 16))
+                Console.WriteLine("Not ok 2");*/
+
+            ManagerOfAppointments appointments = new ManagerOfAppointments(ref rep);
+            if (!appointments.AddAppointment(leaf, 1))
+                Console.WriteLine("Not ok 1");
+
+            if (!appointments.AddAppointment(leafi, 1, new DateTime(2019, 11, 1, 16, 0, 0)))
                 Console.WriteLine("Not ok 2");
 
-            
+
             ManagerOfDoctors manager = new ManagerOfDoctors(ref rep);
             Doctor doc = new Doctor();
             if (manager.GetDoctorById(0, ref doc))
