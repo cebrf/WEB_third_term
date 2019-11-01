@@ -133,15 +133,11 @@ namespace _2_TaskTwo
                     Therapist newTherapist = new Therapist(id);
                     doctors[id] = newTherapist;
                 }
-                else if (therapyAreas.ContainsKey(therapyAreaId))
+                else
                 {
                     Specialist newSpecialist = new Specialist(id, therapyAreaId);
                     doctors[id] = newSpecialist;
                     specialistsNumber++;
-                }
-                else
-                {
-                    // TODO throw exception: no such therapyArea
                 }
             }
 
@@ -262,16 +258,24 @@ namespace _2_TaskTwo
         {
             internal ManagerOfDoctors() { }
             internal ManagerOfDoctors(ref Reception rhs) : base(ref rhs) { }
-            internal bool AddDoctor(int id, int therapyAreaId = -1)
+            internal bool AddDoctor(ref string error, int id, int therapyAreaId = -1)
             {
                 if (!doctors.ContainsKey(id))
                 {
-                    this.addDoctor(id, therapyAreaId);
-                    return true;
+                    if (therapyAreas.ContainsKey(therapyAreaId) || therapyAreaId == -1)
+                    {
+                        this.addDoctor(id, therapyAreaId);
+                        return true;
+                    }
+                    else
+                    {
+                        error = "therapyArea with such id doesn't exist";
+                        return false;
+                    }
                 }
                 else
                 {
-                    //TODO exception
+                    error = "doctor with such id has already exist";
                     return false;
                 }
             }
@@ -643,10 +647,69 @@ namespace _2_TaskTwo
                 }
             }
         }
-        
-        static void Main(string[] args)
+
+        static internal void ConsoleMode()
         {
             Reception rep = new Reception();
+            Console.WriteLine("You are in Console mod now\nChoose operating mode.\nManager of: doctors(1), therapyAreas(2), diagnosis(3), appointments(4)");
+            string input = Console.ReadLine();
+            if (input == "doctors" || input == "1")
+            {
+                ManagerOfDoctorsMode();
+            }
+
+            void ManagerOfDoctorsMode()
+            {
+                ManagerOfDoctors manager = new ManagerOfDoctors(ref rep);
+                string error = "";
+                Console.WriteLine("You are in Manager of doctors mode now");
+
+                while (true)
+                {
+                    Console.WriteLine("Choose operation");
+                    string operation = Console.ReadLine();
+
+                    if (operation == "add")
+                    {
+                        Console.WriteLine("enter id of doctor and his therapyAreaId");
+                        string enter = Console.ReadLine();
+                        int id = -1, therapyAreaId = -1;
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        enter = Console.ReadLine();
+                        if (enter == "-")
+                        {
+                            if (!manager.AddDoctor(ref error, id))
+                            {
+                                Console.WriteLine(error);
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            if (!int.TryParse(enter, out therapyAreaId))
+                            {
+                                Console.WriteLine("incorrect input");
+                                continue;
+                            }
+                            if (!manager.AddDoctor(ref error, id, therapyAreaId))
+                            {
+                                Console.WriteLine(error);
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            ConsoleMode();
+            /*Reception rep = new Reception();
             if (rep.CreateNewModel())
                 Console.WriteLine("new model created");
 
@@ -702,7 +765,7 @@ namespace _2_TaskTwo
             appointments.AddAppointment(new Patient(93), 3, new DateTime(2019, 11, 2, 16, 0, 0));
 
             appointments.NextDay();
-            Console.WriteLine("End");
+            Console.WriteLine("End");*/
         }
     }
 }
