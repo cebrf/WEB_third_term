@@ -539,6 +539,7 @@ namespace _2_TaskTwo
                 }
             }
         }
+        
         class managerOfDiagnosis : Reception
         {
             internal managerOfDiagnosis() { }
@@ -725,7 +726,7 @@ namespace _2_TaskTwo
                         if (manager.GetDoctorById(ref error, id, ref doc))
                         {
                             if (doc is Therapist)
-                                Console.WriteLine(((Therapist)doc).id);
+                                Console.WriteLine(((Therapist)doc).id + " therapist");
                             else
                                 Console.WriteLine(((Specialist)doc).id + " " + manager.TherapyAreas[((Specialist)doc).therapyAreaId].Item1);
                             continue;
@@ -736,7 +737,35 @@ namespace _2_TaskTwo
                             continue;
                         }
                     }
-                    
+                    if (operation == "GetByTherapyAreaId")
+                    {
+                        List<Doctor> docs = new List<Doctor>();
+                        string enter = Console.ReadLine();
+                        int id = -1;
+                        if (enter == "-")
+                        {
+                            if (!manager.GetDoctorsByTherapyAreaId(ref error, ref docs))
+                            {
+                                Console.WriteLine(error);
+                                continue;
+                            }
+                        }
+                        else if (int.TryParse(enter, out id))
+                        {
+                            if (!manager.GetDoctorsByTherapyAreaId(ref error, ref docs, id))
+                            {
+                                Console.WriteLine(error);
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+
+                    }
+                    Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file.");
                 }
             }
         }
