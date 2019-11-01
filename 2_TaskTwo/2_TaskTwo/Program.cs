@@ -21,8 +21,8 @@ namespace _2_TaskTwo
             }
 
             public int id;
-            string title;
-            int deathRate; //тяжесть боезни в процентах
+            internal string title;
+            internal int deathRate; //тяжесть боезни в процентах
         }
         
         class Patient
@@ -415,6 +415,95 @@ namespace _2_TaskTwo
             }
         }
 
+        class managerOfDiagnosis : Reception
+        {
+            internal managerOfDiagnosis() { }
+            internal managerOfDiagnosis(ref Reception rhs) : base(ref rhs) { }
+
+            internal bool AddDiagnosis(int id, string title, int deathRate = 0)
+            {
+                if (!diagnoses.ContainsKey(id))
+                {
+                    diagnoses[id] = new Diagnosis(id, title, deathRate);
+                    return true;
+                }
+                else
+                {
+                    //TODO exception
+                    return false;
+                }
+            }
+            internal bool GetDiagnosisById(int id, ref Diagnosis outVal)
+            {
+                if (diagnoses.ContainsKey(id))
+                {
+                    outVal = diagnoses[id];
+                    return true;
+                }
+                else
+                {
+                    //TODO add exception
+                    return false;
+                }
+            }
+            internal bool GetDiagnosesByTherapyAreaId(int id, ref List<Diagnosis> outVal)
+            {
+                if (therapyAreas.ContainsKey(id))
+                {
+                    for (int i = 0; i < therapyAreas[id].Item2.Count; i++)
+                        outVal.Add(diagnoses[therapyAreas[id].Item2[i]]);
+                    return true;
+                }
+                else
+                {
+                    //TODO add exception
+                    return false;
+                }
+            }
+
+            internal bool GetDiagnosesByDeathRate(int deathRate, ref List<Diagnosis> outVal)
+            {
+                foreach (KeyValuePair<int, Diagnosis> pair in diagnoses)
+                {
+                    if (pair.Value.deathRate == deathRate)
+                        outVal.Add(pair.Value);
+                }
+                return true;
+            }
+
+            internal bool changeDeathRate(int id, int newDeathRate)
+            {
+                if (diagnoses.ContainsKey(id))
+                {
+                    diagnoses[id].deathRate = newDeathRate;
+                    return true;
+                }
+                else
+                {
+                    //TODO exception: no such diagnosis
+                    return false;
+                }
+            }
+
+            internal bool DeleteDiagnosis(int id)
+            {
+                if (diagnoses.ContainsKey(id))
+                {
+                    foreach (KeyValuePair<int, Tuple<string, List<int>>> area in therapyAreas)
+                    {
+                        area.Value.Item2.Remove(id);
+                    }
+                    diagnoses.Remove(id);
+                    return true;
+                }
+                else
+                {
+                    //TODO exception: no such diagnosis
+                    return false;
+                }
+            }
+        }
+        
         static void Main(string[] args)
         {
             Reception rep = new Reception();
@@ -451,6 +540,20 @@ namespace _2_TaskTwo
 
             if (manager.GetDoctorById(0, ref doc))
                 Console.WriteLine("Not ok 6");
+
+            Diagnosis diagnosis = new Diagnosis(0, "bebebe");
+            managerOfDiagnosis managDiagn = new managerOfDiagnosis(ref rep);
+            if (managDiagn.GetDiagnosisById(0, ref diagnosis))
+                Console.WriteLine(diagnosis.title);
+            else
+                Console.WriteLine("Not ok 7");
+
+            if (!managDiagn.DeleteDiagnosis(0))
+                Console.WriteLine("Not ok 8");
+
+            if (managDiagn.GetDiagnosisById(0, ref diagnosis))
+                Console.WriteLine("Not ok 9");
+
 
             Console.WriteLine("End");
         }
