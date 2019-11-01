@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+
 
 namespace _2_TaskTwo
 {
@@ -31,9 +33,11 @@ namespace _2_TaskTwo
             {
                 this.id = id;
                 this.diagnosisId = -1;
+                this.appointmentsNumber = 0;
             }
             internal int id;
             internal int diagnosisId;
+            internal int appointmentsNumber;
         }
         
         class Doctor
@@ -81,6 +85,7 @@ namespace _2_TaskTwo
                 this.therapyAreas = rhs.therapyAreas;
                 this.diagnoses = rhs.diagnoses;
                 this.appointments = rhs.appointments;
+                this.specialistsNumber = rhs.specialistsNumber;
             }
 
             internal bool CreateNewModel()
@@ -103,19 +108,15 @@ namespace _2_TaskTwo
                     { 0, new Therapist(0) },
                     { 1, new Specialist(1, 2) },
                     { 3, new Specialist(3, 4) },
+                    { 5, new Therapist(5) },
                 };
-                //specialistNumber = 1;
-
-                for (int i = 0; i < 4; i++)
-                {
-                    addDoctor(i, i % therapyAreas.Count);
-                }
-
-                DateTime currentDay = DateTime.Today;
+                specialistsNumber = 2;
+                                
+                firstDay = DateTime.Today;
+                lastDay = DateTime.Today.AddDays(-1);
                 for (int i = 0; i < 10; i++)
                 {
-                    addDay(currentDay);
-                    currentDay = currentDay.AddDays(1);
+                    addDay();
                 }
 
                 return true;
@@ -136,7 +137,7 @@ namespace _2_TaskTwo
                 {
                     Specialist newSpecialist = new Specialist(id, therapyAreaId);
                     doctors[id] = newSpecialist;
-                    //specialistNumber++;
+                    specialistsNumber++;
                 }
                 else
                 {
@@ -144,27 +145,76 @@ namespace _2_TaskTwo
                 }
             }
 
-            void addDay(DateTime newDay)
+            void addDay()
             {
                 lastDay = lastDay.AddDays(1);
 
-                appointments[newDay] = new Dictionary<int, Dictionary<int, int>>();
+                appointments[lastDay] = new Dictionary<int, Dictionary<int, int>>();
                 foreach (KeyValuePair<int, Doctor> doc in doctors)
                 {
-                    appointments[newDay][doc.Value.id] = new Dictionary<int, int>();
+                    appointments[lastDay][doc.Value.id] = new Dictionary<int, int>();
                 }
             }
             
             internal bool NextDay()
             {
                 DateTime currentDay = firstDay;
+                firstDay = firstDay.AddDays(1);
+                addDay();
+                foreach (KeyValuePair<int, Doctor> doc in doctors)
+                {
+                    foreach (KeyValuePair<int, int> appointment in appointments[currentDay][doc.Key])
+                    {
+                        int time = appointment.Key;
+                        int patientId = appointment.Value;
+                        if (doc.Value is Specialist)
+                        {
+                            int diagnosisId = ((Specialist)doc.Value).EstablishDiagnosis(patients[patientId], diagnoses.Count);
+                            patients[patientId].diagnosisId = diagnoses.ElementAt(diagnosisId).Key;
+                            
+                            Console.WriteLine(patients[patientId].id + "  has  " + diagnoses[patients[patientId].diagnosisId].title);
+                            //TODO выводим информацию в консоль
+
+                            patients[patientId].diagnosisId--;
+                            if (patients[patientId].diagnosisId == 0)
+                                patients.Remove(patientId);
+                            //TODO добавить пациенту поле Кол-во записей и удалять пациента только, если записей больше нет
+                        }
+                        else
+                        {
+                            int doctorId = ((Therapist)doc.Value).ExecuteMedicalExamination(patients[patientId], specialistsNumber);
+                            int specialistId = -1;
+                            foreach (KeyValuePair<int, Doctor> doct in doctors)
+                            {
+                                specialistId++;
+                                if (doct.Value is Specialist)
+                                {
+                                    if (specialistId == doctorId)
+                                    {
+                                        specialistId = doct.Key;
+                                        break;
+                                    }   
+                                }
+                            }
+                            specialistId = (specialistId == -1 ? 0 : specialistId);
+
+                            Patient currentPatient = patients[patientId];
+                            patients[patientId].diagnosisId--;
+                            if (patients[patientId].diagnosisId == 0)
+                                patients.Remove(patientId);
+                            addAppointment(currentPatient, specialistId);
+                        }
+                    }
+                }
+
+                appointments.Remove(currentDay);
                 return true;
             }
 
             protected bool addAppointment(Patient patient, int doctorId)
             {
                 DateTime currentDay = firstDay;
-                while (currentDay != lastDay)
+                while (currentDay != lastDay.AddDays(1))
                 {
                     for (int i = 9; i < 19; i++)
                     {
@@ -172,7 +222,11 @@ namespace _2_TaskTwo
                         {
                             appointments[currentDay][doctorId][i] = patient.id;
 
-                            patients.Add(patient);
+                            if (!patients.ContainsKey(patient.id))
+                            {
+                                patients[patient.id] = patient;
+                            }
+                            patients[patient.id].appointmentsNumber++;
                             return true;
                         }
                     }
@@ -183,22 +237,19 @@ namespace _2_TaskTwo
             protected bool addAppointment(Patient patient, int doctorId, DateTime dateTime)
             {
                 appointments[dateTime.Date][doctorId][dateTime.Hour] = patient.id;
-                patients.Add(patient);
+                if (!patients.ContainsKey(patient.id))
+                {
+                    patients[patient.id] = patient;
+                }
+                patients[patient.id].appointmentsNumber++;
                 return true;
             }
 
             protected DateTime firstDay = DateTime.Today;
             protected DateTime lastDay = DateTime.Today;
             protected Dictionary<int, Doctor> doctors = new Dictionary<int, Doctor>();
-            protected List<Patient> patients = new List<Patient>();
-            /*protected int specialistNumber = 0;
-            public int SpecialistNumber
-            {
-                get
-                {
-                    return specialistNumber;
-                }
-            }*/
+            protected Dictionary<int, Patient> patients = new Dictionary<int, Patient>();
+            protected int specialistsNumber = 0;
             protected Dictionary<int, Tuple<string, List<int>>> therapyAreas = new Dictionary<int, Tuple<string, List<int>>>();
             protected Dictionary<int, Diagnosis> diagnoses;
 
@@ -299,12 +350,6 @@ namespace _2_TaskTwo
 
             internal bool AddAppointment(Patient patient, int doctorId = -1, DateTime dateTime = new DateTime())
             {
-                if (!doctors.ContainsKey(doctorId))
-                {
-                    //TODO throw exception: no such doctor
-                    return false;
-                }
-
                 if (doctorId == -1)
                 {
                     foreach (KeyValuePair<int, Doctor> doc in doctors)
@@ -316,6 +361,12 @@ namespace _2_TaskTwo
                 if (doctorId == -1)
                 {
                     //TODO throw exception: no Therapist in that hospital
+                    return false;
+                }
+
+                if (!doctors.ContainsKey(doctorId))
+                {
+                    //TODO throw exception: no such doctor
                     return false;
                 }
 
@@ -411,7 +462,7 @@ namespace _2_TaskTwo
                 if (GetPatient(dateTime, doctorId, ref patientId))
                 {
                     appointments[dateTime.Date][doctorId].Remove(dateTime.Hour);
-                    patients.RemoveAt(patientId);
+                    patients.Remove(patientId);
                     return true;
                 }
                 else
@@ -600,6 +651,13 @@ namespace _2_TaskTwo
                 Console.WriteLine("Not ok 9");
 
 
+
+            appointments.AddAppointment(new Patient(93));
+            appointments.AddAppointment(new Patient(95));
+            appointments.AddAppointment(new Patient(97), 1);
+            appointments.AddAppointment(new Patient(93), 3, new DateTime(2019, 11, 2, 16, 0, 0));
+
+            appointments.NextDay();
             Console.WriteLine("End");
         }
     }
