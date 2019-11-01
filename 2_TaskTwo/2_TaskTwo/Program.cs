@@ -24,7 +24,7 @@ namespace _2_TaskTwo
 
             public int id;
             internal string title;
-            internal int deathRate; //тяжесть боезни в процентах
+            internal int deathRate;
         }
         
         class Patient
@@ -489,6 +489,50 @@ namespace _2_TaskTwo
             }
         }
 
+        class ManagerOfTherapyAreas : Reception
+        {
+            internal ManagerOfTherapyAreas() { }
+            internal ManagerOfTherapyAreas(ref Reception rhs) : base(ref rhs) { }
+            internal bool AddTherapyArea(int id, string title, List<int> diagnosesId)
+            {
+                if (!therapyAreas.ContainsKey(id))
+                {
+                    if (id == -1)
+                    {
+                        id = therapyAreas.Count;
+                    }
+                    foreach (int el in diagnosesId)
+                    {
+                        if (!diagnoses.ContainsKey(el))
+                        {
+                            //TODO exception: no such diagnoses
+                            return false;
+                        }
+                    }
+                    therapyAreas[id] = new Tuple<string, List<int>>(title, diagnosesId);
+                    return true;
+                }
+                else
+                {
+                    //TODO exception
+                    return false;
+                }
+            }
+        
+            internal bool GetTherapyAreaById(int id, ref Tuple<string, List<int>> outVal)
+            {
+                if (therapyAreas.ContainsKey(id))
+                {
+                    outVal = therapyAreas[id];
+                    return true;
+                }
+                else
+                {
+                    //TODO exception
+                    return false;
+                }
+            }
+        }
         class managerOfDiagnosis : Reception
         {
             internal managerOfDiagnosis() { }
