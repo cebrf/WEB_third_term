@@ -585,29 +585,7 @@ namespace _2_TaskTwo
                     return false;
                 }
             }
-
-            internal bool GetDiagnosesBySpecialistId(ref string error, int id, ref List<Diagnosis> outVal)
-            {
-                if (doctors.ContainsKey(id))
-                {
-                    if (doctors[id] is Specialist)
-                    {
-                        GetDiagnosesByTherapyAreaId(ref error, ((Specialist)doctors[id]).therapyAreaId, ref outVal);
-                        return true;
-                    }
-                    else
-                    {
-                        error = "it is not specialist"; //у терапевта нет списка с диагнозами
-                        return false;
-                    }
-                }
-                else
-                {
-                    error = "no specialist with such id";
-                    return false;
-                }
-            }
-
+            
             internal bool GetDiagnosesByDeathRate(ref string error, int deathRate, ref List<Diagnosis> outVal)
             {
                 outVal.Clear();
@@ -624,7 +602,7 @@ namespace _2_TaskTwo
                 return true;
             }
 
-            internal bool changeDeathRate(ref string error, int id, int newDeathRate)
+            internal bool ChangeDeathRate(ref string error, int id, int newDeathRate)
             {
                 if (diagnoses.ContainsKey(id))
                 {
@@ -661,11 +639,21 @@ namespace _2_TaskTwo
         {
             Reception rep = new Reception();
             rep.CreateNewModel();
-            Console.WriteLine("You are in Console mod now\nChoose operating mode.\nManager of: doctors(1), therapyAreas(2), diagnosis(3), appointments(4)");
-            string input = Console.ReadLine();
-            if (input == "doctors" || input == "1")
+            while (true)
             {
-                ManagerOfDoctorsMode();
+                Console.WriteLine("You are in Console mod now\nChoose operating mode.\nManager of: doctors(1), therapyAreas(2), diagnosis(3), appointments(4)");
+                string mode = Console.ReadLine();
+                if (mode == "doctors" || mode == "1")
+                {
+                    ManagerOfDoctorsMode();
+                    continue;
+                }
+                if (mode == "therapyAreas" || mode == "2")
+                {
+                    ManagerOfDiagnosis();
+                    continue;
+                }
+                Console.WriteLine(mode + " is not an internal or external command, executable program, or batch file. Choose another operation");
             }
 
             void ManagerOfDoctorsMode()
@@ -697,6 +685,11 @@ namespace _2_TaskTwo
                                 Console.WriteLine(error);
                                 continue;
                             }
+                            else
+                            {
+                                Console.WriteLine("doctor was added");
+                                continue;
+                            }
                         }
                         else
                         {
@@ -710,9 +703,14 @@ namespace _2_TaskTwo
                                 Console.WriteLine(error);
                                 continue;
                             }
+                            else
+                            {
+                                Console.WriteLine("doctor was added");
+                                continue;
+                            }
                         }
                     }
-                    if (operation == "GetById")
+                    if (operation == "getById")
                     {
                         Console.WriteLine("enter id of doctor");
                         string enter = Console.ReadLine();
@@ -737,8 +735,9 @@ namespace _2_TaskTwo
                             continue;
                         }
                     }
-                    if (operation == "GetByTherapyAreaId")
+                    if (operation == "getByTherapyAreaId")
                     {
+                        Console.WriteLine("enter id of therapyArea");
                         List<Doctor> docs = new List<Doctor>();
                         string enter = Console.ReadLine();
                         int id = -1;
@@ -757,6 +756,17 @@ namespace _2_TaskTwo
                                 Console.WriteLine(error);
                                 continue;
                             }
+                            else
+                            {
+                                for (int i = 0; i < docs.Count; i++)
+                                {
+                                    if (docs[i] is Therapist)
+                                        Console.WriteLine(((Therapist)docs[i]).id + " therapist");
+                                    else
+                                        Console.WriteLine(((Specialist)docs[i]).id + " " + manager.TherapyAreas[((Specialist)docs[i]).therapyAreaId].Item1);
+                                    continue;
+                                }
+                            }
                         }
                         else
                         {
@@ -765,10 +775,197 @@ namespace _2_TaskTwo
                         }
 
                     }
-                    Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file.");
+                    if (operation == "delete")
+                    {
+                        Console.WriteLine("enter id of doctor");
+                        string enter = Console.ReadLine();
+                        int id = -1;
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        if (manager.DeleteDoctor(ref error, id))
+                        {
+                            Console.WriteLine("Doctor deleted");
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                    }
+                    if (operation == "goBack")
+                    {
+                        return;
+                    }
+                    Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                 }
             }
-        }
+        
+            void ManagerOfDiagnosis()
+            {
+                managerOfDiagnosis manager = new managerOfDiagnosis(ref rep);
+                string error = "";
+                Console.WriteLine("You are in Manager of doctors mode now");
+
+                while (true)
+                {
+                    Console.WriteLine("Choose operation");
+                    string operation = Console.ReadLine();
+                    if (operation == "add")
+                    {
+                        Console.WriteLine("enter id of diagnosis, its title and deathRate");
+                        int id = -1;
+                        string title;
+                        int deathRate = 0;
+                        string enter = Console.ReadLine();
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        title = Console.ReadLine();
+                        enter = Console.ReadLine();
+                        if (enter == "-")
+                        {
+                            if (!manager.AddDiagnosis(ref error, id, title))
+                            {
+                                Console.WriteLine(error);
+                                continue;
+                            }
+                            else
+                            {
+                                Console.WriteLine("diagnosis was added");
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            if (!int.TryParse(enter, out deathRate))
+                            {
+                                Console.WriteLine("incorrect input");
+                                continue;
+                            }
+                            if (!manager.AddDiagnosis(ref error, id, title, deathRate))
+                            {
+                                Console.WriteLine(error);
+                                continue;
+                            }
+                            else
+                            {
+                                Console.WriteLine("diagnosis was added");
+                                continue;
+                            }
+                        }
+                    }
+                    if (operation == "getByTherapyAreaId")
+                    {
+                        //GetDiagnosesByTherapyAreaId(ref string error, int id, ref List < Diagnosis > outVal)
+                        Console.WriteLine("enter id of therapyArea");
+                        int id = -1;
+                        string enter = Console.ReadLine();
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        List<Diagnosis> diagnoses = new List<Diagnosis>();
+                        if (manager.GetDiagnosesByTherapyAreaId(ref error, id, ref diagnoses))
+                        {
+                            for (int i = 0; i < diagnoses.Count; i++)
+                            {
+                                Console.WriteLine(diagnoses[i].id + " " + diagnoses[i].title + " " + diagnoses[i].deathRate);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                    }
+                    if (operation == "getByDeathRate")
+                    {
+                        //GetDiagnosesByDeathRate(ref string error, int deathRate, ref List<Diagnosis> outVal)
+                        Console.WriteLine("enter deathRate");
+                        int deathRate = 0;
+                        string enter = Console.ReadLine();
+                        if (!int.TryParse(enter, out deathRate))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        List<Diagnosis> diagnoses = new List<Diagnosis>();
+                        if (manager.GetDiagnosesByDeathRate(ref error, deathRate, ref diagnoses))
+                        {
+                            for (int i = 0; i < diagnoses.Count; i++)
+                            {
+                                Console.WriteLine(diagnoses[i].id + " " + diagnoses[i].title + " " + diagnoses[i].deathRate);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                    }
+                    if (operation == "changeDeathRate")
+                    {
+                        Console.WriteLine("enter id of diagnosis and new deathRate");
+                        int id = -1;
+                        int deathRate = 0;
+                        string enter = Console.ReadLine();
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        enter = Console.ReadLine();
+                        if (!int.TryParse(enter, out deathRate))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        if (!manager.ChangeDeathRate(ref error, id, deathRate))
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine("deathRate was changed");
+                            continue;
+                        }
+                    }
+                    if (operation == "delete")
+                    {
+                        Console.WriteLine("enter id of diagnosis");
+                        string enter = Console.ReadLine();
+                        int id = -1;
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        if (manager.DeleteDiagnosis(ref error, id))
+                        {
+                            Console.WriteLine("diagnosis was deleted");
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                    }
+                    if (operation == "goBack")
+                    {
+                        return;
+                    }
+                    Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
+                }
+            }
 
         static void Main(string[] args)
         {
