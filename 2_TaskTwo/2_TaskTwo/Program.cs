@@ -47,9 +47,11 @@ namespace _2_TaskTwo
 
         class Therapist : Doctor
         {
-            internal Therapist(int id) : base(id)
+            internal Therapist(int id) : base(id) { }
+            internal int ExecuteMedicalExamination(Patient patient, int specialistNumber)
             {
-
+                Random rnd = new Random();
+                return rnd.Next(0, specialistNumber);
             }
         }
 
@@ -81,7 +83,6 @@ namespace _2_TaskTwo
                 this.appointments = rhs.appointments;
             }
 
-            
             internal bool CreateNewModel()
             {
                 therapyAreas = new Dictionary<int, Tuple<string, List<int>>>()
@@ -100,8 +101,10 @@ namespace _2_TaskTwo
                 doctors = new Dictionary<int, Doctor>()
                 {
                     { 0, new Therapist(0) },
-                    { 1, new Specialist(1, 2) }
+                    { 1, new Specialist(1, 2) },
+                    { 3, new Specialist(3, 4) },
                 };
+                //specialistNumber = 1;
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -133,6 +136,7 @@ namespace _2_TaskTwo
                 {
                     Specialist newSpecialist = new Specialist(id, therapyAreaId);
                     doctors[id] = newSpecialist;
+                    //specialistNumber++;
                 }
                 else
                 {
@@ -151,6 +155,12 @@ namespace _2_TaskTwo
                 }
             }
             
+            internal bool NextDay()
+            {
+                DateTime currentDay = firstDay;
+                return true;
+            }
+
             protected bool addAppointment(Patient patient, int doctorId)
             {
                 DateTime currentDay = firstDay;
@@ -181,6 +191,14 @@ namespace _2_TaskTwo
             protected DateTime lastDay = DateTime.Today;
             protected Dictionary<int, Doctor> doctors = new Dictionary<int, Doctor>();
             protected List<Patient> patients = new List<Patient>();
+            /*protected int specialistNumber = 0;
+            public int SpecialistNumber
+            {
+                get
+                {
+                    return specialistNumber;
+                }
+            }*/
             protected Dictionary<int, Tuple<string, List<int>>> therapyAreas = new Dictionary<int, Tuple<string, List<int>>>();
             protected Dictionary<int, Diagnosis> diagnoses;
 
@@ -458,6 +476,28 @@ namespace _2_TaskTwo
                     for (int i = 0; i < therapyAreas[id].Item2.Count; i++)
                         outVal.Add(diagnoses[therapyAreas[id].Item2[i]]);
                     return true;
+                }
+                else
+                {
+                    //TODO add exception
+                    return false;
+                }
+            }
+
+            internal bool GetDiagnosesBySpecialistId(int id, ref List<Diagnosis> outVal)
+            {
+                if (doctors.ContainsKey(id))
+                {
+                    if (doctors[id] is Specialist)
+                    {
+                        GetDiagnosesByTherapyAreaId(((Specialist)doctors[id]).therapyAreaId, ref outVal);
+                        return true;
+                    }
+                    else
+                    {
+                        //TODO exceprion: it is not specialist
+                        return false;
+                    }
                 }
                 else
                 {
