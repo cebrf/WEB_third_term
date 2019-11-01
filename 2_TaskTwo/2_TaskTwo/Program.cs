@@ -60,6 +60,11 @@ namespace _2_TaskTwo
                 this.therapyAreaId = therapyAreaId;
             }
             internal int therapyAreaId;
+            internal int EstablishDiagnosis(Patient patient, int diagnosesNumber)
+            {
+                Random rnd = new Random();
+                return rnd.Next(0, diagnosesNumber);
+            }
         }
 
         class Reception
@@ -145,7 +150,7 @@ namespace _2_TaskTwo
                     appointments[newDay][doc.Value.id] = new Dictionary<int, int>();
                 }
             }
-
+            
             protected bool addAppointment(Patient patient, int doctorId)
             {
                 DateTime currentDay = firstDay;
