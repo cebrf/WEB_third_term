@@ -247,6 +247,13 @@ namespace _2_TaskTwo
             protected Dictionary<int, Patient> patients = new Dictionary<int, Patient>();
             protected int specialistsNumber = 0;
             protected Dictionary<int, Tuple<string, List<int>>> therapyAreas = new Dictionary<int, Tuple<string, List<int>>>();
+            public Dictionary<int, Tuple<string, List<int>>> TherapyAreas
+            {
+                get
+                {
+                    return therapyAreas;
+                }
+            }
             protected Dictionary<int, Diagnosis> diagnoses;
 
             protected Dictionary<DateTime, Dictionary<int, Dictionary<int, int>>> appointments = new Dictionary<DateTime, Dictionary<int, Dictionary<int, int>>>();
@@ -280,29 +287,21 @@ namespace _2_TaskTwo
                 }
             }
 
-            internal bool GetDoctorById(int id, ref Doctor outVal)
+            internal bool GetDoctorById(ref string error, int id, ref Doctor outVal)
             {
-                if (id >= 0 && id < doctors.Count)
+                if (doctors.ContainsKey(id))
                 {
-                    if (doctors.ContainsKey(id))
-                    {
-                        outVal = doctors[id];
-                        return true;
-                    }
-                    else
-                    {
-                        //TODO exception
-                        return false;
-                    }
+                    outVal = doctors[id];
+                    return true;
                 }
                 else
                 {
-                    //TODO throw exception no such doctorId
+                    error = "no doctor with such id";
                     return false;
                 }
             }
 
-            internal bool GetDoctorsByTherapyAreaId (ref List<Doctor> outVal, int id = -1)
+            internal bool GetDoctorsByTherapyAreaId (ref string error, ref List<Doctor> outVal, int id = -1)
             {
                 if (id >= 0 && id < therapyAreas.Count)
                 {
@@ -320,13 +319,13 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    //TODO exception: no such area
+                    error = "no area with such id";
                     return false;
                 }
                 return true;
             }
 
-            internal bool DeleteDoctor (int id)
+            internal bool DeleteDoctor (ref string error, int id)
             {                
                 if (doctors.ContainsKey(id))
                 {
@@ -339,7 +338,7 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    //TODO exceprion: no such doctor
+                    error = "no doctor with such id";
                     return false;
                 }
 
@@ -352,7 +351,7 @@ namespace _2_TaskTwo
             internal ManagerOfAppointments() { }
             internal ManagerOfAppointments(ref Reception rhs) : base(ref rhs) { }
 
-            internal bool AddAppointment(Patient patient, int doctorId = -1, DateTime dateTime = new DateTime())
+            internal bool AddAppointment(ref string error, Patient patient, int doctorId = -1, DateTime dateTime = new DateTime())
             {
                 if (doctorId == -1)
                 {
@@ -364,13 +363,13 @@ namespace _2_TaskTwo
                 }
                 if (doctorId == -1)
                 {
-                    //TODO throw exception: no Therapist in that hospital
+                    error = "no Therapist in that hospital";
                     return false;
                 }
 
                 if (!doctors.ContainsKey(doctorId))
                 {
-                    //TODO throw exception: no such doctor
+                    error = "no doctor with such id";
                     return false;
                 }
 
@@ -379,7 +378,7 @@ namespace _2_TaskTwo
                     // время записи не известно - записываем в первое попавшееся время. Полагаем, что пациенту все равно
                     if (!addAppointment(patient, doctorId))
                     {
-                        //TODO exception "no free time";
+                        error = "no free time";
                         return false;
                     }
                 }
@@ -393,20 +392,20 @@ namespace _2_TaskTwo
                         }
                         else
                         {
-                            //TODO запись занята
+                            error = "запись занята";
                             return false;
                         }
                     }
                     else
                     {
-                        //TODO exception "incorrect date";
+                        error = "incorrect date";
                         return false;
                     }
                 }
                 return true;
             }
         
-            internal bool GetAppointmentsForDay(DateTime dateTime, ref Dictionary<int, Dictionary<int, int>> outVal)
+            internal bool GetAppointmentsForDay(ref string error, DateTime dateTime, ref Dictionary<int, Dictionary<int, int>> outVal)
             {
                 if (appointments.ContainsKey(dateTime.Date))
                 {
@@ -415,11 +414,12 @@ namespace _2_TaskTwo
                 }
                 else
                 {
+                    error = "empty appointment";
                     return false;
                 }
             }
 
-            internal bool GetAppointmentsForDoctor(int id, ref Dictionary<DateTime, Dictionary<int, int>> outVal)
+            internal bool GetAppointmentsForDoctor(ref string error, int id, ref Dictionary<DateTime, Dictionary<int, int>> outVal)
             {
                 if (doctors.ContainsKey(id))
                 {
@@ -431,20 +431,21 @@ namespace _2_TaskTwo
                 }
                 else
                 {
+                    error = "no doctor with such id";
                     return false;
                 }
             }
 
-            internal bool GetPatient(DateTime dateTime, int doctorId, ref int outVal)
+            internal bool GetPatient(ref string error, DateTime dateTime, int doctorId, ref int outVal)
             {
                 if (!doctors.ContainsKey(doctorId))
                 {
-                    //TODO error: no such doctor
+                    error = "no such doctor";
                     return false;
                 }
                 if (!(dateTime.Date >= firstDay.Date && dateTime.Date <= lastDay.Date && dateTime.Hour >= 9 && dateTime.Hour <= 19))
                 {
-                    //TODO incorrect dateTime
+                    error = "incorrect dateTime";
                     return false;
                 }
 
@@ -455,15 +456,15 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    //TODO no such appointment
+                    error = "no such appointment";
                     return false;
                 }
             }
 
-            internal bool DeleteAppointment(DateTime dateTime, int doctorId)
+            internal bool DeleteAppointment(ref string error, DateTime dateTime, int doctorId)
             {
                 int patientId = 0;
-                if (GetPatient(dateTime, doctorId, ref patientId))
+                if (GetPatient(ref error, dateTime, doctorId, ref patientId))
                 {
                     appointments[dateTime.Date][doctorId].Remove(dateTime.Hour);
                     patients.Remove(patientId);
@@ -471,24 +472,25 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    //TODO no such Appointment
+                    error = "no such Appointment";
                     return false;
                 }
             }
         
-            internal bool ChangeAppointment(DateTime prevDateTime, int doctorId, DateTime newDateTime)
+            internal bool ChangeAppointment(ref string error, DateTime prevDateTime, int doctorId, DateTime newDateTime)
             {
                 int patientId = -1;
-                if (GetPatient(prevDateTime, doctorId, ref patientId))
+                if (GetPatient(ref error, prevDateTime, doctorId, ref patientId))
                 {
-                    if (DeleteAppointment(prevDateTime, doctorId))
+                    if (DeleteAppointment(ref error, prevDateTime, doctorId))
                     {
-                        if (AddAppointment(patients[patientId], doctorId, newDateTime))
+                        if (AddAppointment(ref error, patients[patientId], doctorId, newDateTime))
                         {
                             return true;
                         }
                     }
                 }
+                error = "no such appointment";
                 return false;
             }
         }
@@ -497,7 +499,7 @@ namespace _2_TaskTwo
         {
             internal ManagerOfTherapyAreas() { }
             internal ManagerOfTherapyAreas(ref Reception rhs) : base(ref rhs) { }
-            internal bool AddTherapyArea(int id, string title, List<int> diagnosesId)
+            internal bool AddTherapyArea(ref string error, int id, string title, List<int> diagnosesId)
             {
                 if (!therapyAreas.ContainsKey(id))
                 {
@@ -509,7 +511,7 @@ namespace _2_TaskTwo
                     {
                         if (!diagnoses.ContainsKey(el))
                         {
-                            //TODO exception: no such diagnoses
+                            error = "no diagnoses with such id";
                             return false;
                         }
                     }
@@ -518,12 +520,12 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    //TODO exception
+                    error = "therapy area with such is has already exist";
                     return false;
                 }
             }
         
-            internal bool GetTherapyAreaById(int id, ref Tuple<string, List<int>> outVal)
+            internal bool GetTherapyAreaById(ref string error, int id, ref Tuple<string, List<int>> outVal)
             {
                 if (therapyAreas.ContainsKey(id))
                 {
@@ -532,7 +534,7 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    //TODO exception
+                    error = "no therapyArea with such id";
                     return false;
                 }
             }
@@ -542,7 +544,7 @@ namespace _2_TaskTwo
             internal managerOfDiagnosis() { }
             internal managerOfDiagnosis(ref Reception rhs) : base(ref rhs) { }
 
-            internal bool AddDiagnosis(int id, string title, int deathRate = 0)
+            internal bool AddDiagnosis(ref string error, int id, string title, int deathRate = 0)
             {
                 if (!diagnoses.ContainsKey(id))
                 {
@@ -551,11 +553,11 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    //TODO exception
+                    error = "diagnosis with such id has already exist";
                     return false;
                 }
             }
-            internal bool GetDiagnosisById(int id, ref Diagnosis outVal)
+            internal bool GetDiagnosisById(ref string error, int id, ref Diagnosis outVal)
             {
                 if (diagnoses.ContainsKey(id))
                 {
@@ -564,11 +566,11 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    //TODO add exception
+                    error = "no diagnosis with such id";
                     return false;
                 }
             }
-            internal bool GetDiagnosesByTherapyAreaId(int id, ref List<Diagnosis> outVal)
+            internal bool GetDiagnosesByTherapyAreaId(ref string error, int id, ref List<Diagnosis> outVal)
             {
                 if (therapyAreas.ContainsKey(id))
                 {
@@ -578,44 +580,50 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    //TODO add exception
+                    error = "no therapyArea with such id";
                     return false;
                 }
             }
 
-            internal bool GetDiagnosesBySpecialistId(int id, ref List<Diagnosis> outVal)
+            internal bool GetDiagnosesBySpecialistId(ref string error, int id, ref List<Diagnosis> outVal)
             {
                 if (doctors.ContainsKey(id))
                 {
                     if (doctors[id] is Specialist)
                     {
-                        GetDiagnosesByTherapyAreaId(((Specialist)doctors[id]).therapyAreaId, ref outVal);
+                        GetDiagnosesByTherapyAreaId(ref error, ((Specialist)doctors[id]).therapyAreaId, ref outVal);
                         return true;
                     }
                     else
                     {
-                        //TODO exceprion: it is not specialist
+                        error = "it is not specialist"; //у терапевта нет списка с диагнозами
                         return false;
                     }
                 }
                 else
                 {
-                    //TODO add exception
+                    error = "no specialist with such id";
                     return false;
                 }
             }
 
-            internal bool GetDiagnosesByDeathRate(int deathRate, ref List<Diagnosis> outVal)
+            internal bool GetDiagnosesByDeathRate(ref string error, int deathRate, ref List<Diagnosis> outVal)
             {
+                outVal.Clear();
                 foreach (KeyValuePair<int, Diagnosis> pair in diagnoses)
                 {
                     if (pair.Value.deathRate == deathRate)
                         outVal.Add(pair.Value);
                 }
+                if (outVal.Count == 0)
+                {
+                    error = "no diagnoses with such death rate";
+                    return false;
+                }
                 return true;
             }
 
-            internal bool changeDeathRate(int id, int newDeathRate)
+            internal bool changeDeathRate(ref string error, int id, int newDeathRate)
             {
                 if (diagnoses.ContainsKey(id))
                 {
@@ -624,12 +632,12 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    //TODO exception: no such diagnosis
+                    error = "no diagnosis with such id";
                     return false;
                 }
             }
 
-            internal bool DeleteDiagnosis(int id)
+            internal bool DeleteDiagnosis(ref string error, int id)
             {
                 if (diagnoses.ContainsKey(id))
                 {
@@ -642,7 +650,7 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    //TODO exception: no such diagnosis
+                    error = "no diagnosis with such id";
                     return false;
                 }
             }
@@ -651,6 +659,7 @@ namespace _2_TaskTwo
         static internal void ConsoleMode()
         {
             Reception rep = new Reception();
+            rep.CreateNewModel();
             Console.WriteLine("You are in Console mod now\nChoose operating mode.\nManager of: doctors(1), therapyAreas(2), diagnosis(3), appointments(4)");
             string input = Console.ReadLine();
             if (input == "doctors" || input == "1")
@@ -702,6 +711,32 @@ namespace _2_TaskTwo
                             }
                         }
                     }
+                    if (operation == "GetById")
+                    {
+                        Console.WriteLine("enter id of doctor");
+                        string enter = Console.ReadLine();
+                        int id = -1;
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        Doctor doc = new Doctor();
+                        if (manager.GetDoctorById(ref error, id, ref doc))
+                        {
+                            if (doc is Therapist)
+                                Console.WriteLine(((Therapist)doc).id);
+                            else
+                                Console.WriteLine(((Specialist)doc).id + " " + manager.TherapyAreas[((Specialist)doc).therapyAreaId].Item1);
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                    }
+                    
                 }
             }
         }
