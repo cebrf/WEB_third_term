@@ -645,18 +645,27 @@ namespace _2_TaskTwo
                 string mode = Console.ReadLine();
                 if (mode == "doctors" || mode == "1")
                 {
-                    ManagerOfDoctorsMode();
+                    managerOfDoctorsMode();
                     continue;
                 }
                 if (mode == "therapyAreas" || mode == "2")
                 {
-                    ManagerOfDiagnosis();
+                    managerOfTherapyAreas();
                     continue;
+                }
+                if (mode == "diagnosis" || mode == "3")
+                {
+                    managerOfDiagnosis();
+                    continue;
+                }
+                if (mode == "appointments" || mode == "4")
+                {
+                    managerOfAppointments();
                 }
                 Console.WriteLine(mode + " is not an internal or external command, executable program, or batch file. Choose another operation");
             }
 
-            void ManagerOfDoctorsMode()
+            void managerOfDoctorsMode()
             {
                 ManagerOfDoctors manager = new ManagerOfDoctors(ref rep);
                 string error = "";
@@ -803,12 +812,12 @@ namespace _2_TaskTwo
                     Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                 }
             }
-        
-            void ManagerOfDiagnosis()
+
+            void managerOfDiagnosis()
             {
                 managerOfDiagnosis manager = new managerOfDiagnosis(ref rep);
                 string error = "";
-                Console.WriteLine("You are in Manager of doctors mode now");
+                Console.WriteLine("You are in Manager of diagnosis mode now");
 
                 while (true)
                 {
@@ -858,6 +867,29 @@ namespace _2_TaskTwo
                                 Console.WriteLine("diagnosis was added");
                                 continue;
                             }
+                        }
+                    }
+                    if (operation == "getById")
+                    {
+                        //GetDiagnosisById(ref string error, int id, ref Diagnosis outVal)
+                        Console.WriteLine("enter id of diagnosis");
+                        string enter = Console.ReadLine();
+                        int id = -1;
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        Diagnosis diagnosis = new Diagnosis(0, "");
+                        if (manager.GetDiagnosisById(ref error, id, ref diagnosis))
+                        {
+                            Console.WriteLine(diagnosis.id + " " + diagnosis.title + " " + diagnosis.deathRate);
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
                         }
                     }
                     if (operation == "getByTherapyAreaId")
@@ -966,6 +998,112 @@ namespace _2_TaskTwo
                     Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                 }
             }
+
+            void managerOfTherapyAreas()
+            {
+                ManagerOfTherapyAreas manager = new ManagerOfTherapyAreas(ref rep);
+                string error = "";
+                Console.WriteLine("You are in Manager of therapyAreas mode now");
+
+                while (true)
+                {
+                    Console.WriteLine("Choose operation");
+                    string operation = Console.ReadLine();
+                    if (operation == "add")
+                    {
+                        Console.WriteLine("enter id of therapyAreas, its title and diagnosesId");
+                        string enter = Console.ReadLine();
+                        int id;
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        string title = Console.ReadLine();
+                        enter = Console.ReadLine();
+                        string[] diagnosesId_ = enter.Split(" ");
+                        List<int> diagnosesId = new List<int>();
+                        for (int i = 0; i < diagnosesId_.Length; i++)
+                        {
+                            int buf = 0;
+                            if (!int.TryParse(diagnosesId_[i], out buf))
+                            {
+                                Console.WriteLine("incorrect input");
+                                continue;
+                            }
+                            else
+                            {
+                                diagnosesId.Add(buf);
+                            }
+                            continue;
+                        }
+                        if (manager.AddTherapyArea(ref error, id, title, diagnosesId))
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine("therapyArea was added");
+                            continue;
+                        }
+                    }
+                    if (operation == "getById")
+                    {
+                        //GetTherapyAreaById(ref string error, int id, ref Tuple<string, List<int>> outVal)
+                        Console.WriteLine("enter id of therapyArea");
+                        string enter = Console.ReadLine();
+                        int id = -1;
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        Tuple<string, List<int>> therapyArea = new Tuple<string, List<int>>("", new List<int>());
+                        if (manager.GetTherapyAreaById(ref error, id, ref therapyArea))
+                        {
+                            Console.Write(therapyArea.Item1 + "  ");
+                            for (int i = 0; i < therapyArea.Item2.Count; i++)
+                            {
+                                Console.Write(therapyArea.Item2[i] + " ");
+                            }
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                    }
+                    if (operation == "goBack")
+                    {
+                        return;
+                    }
+                    Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
+                }
+            }
+
+
+            void managerOfAppointments()
+            {
+                ManagerOfAppointments manager = new ManagerOfAppointments(ref rep);
+                string error = "";
+                Console.WriteLine("You are in Manager of appointments mode now");
+
+                while(true)
+                {
+                    Console.WriteLine("Choose operation");
+                    string operation = Console.ReadLine();
+                    
+
+                    if (operation == "goBack")
+                    {
+                        return;
+                    }
+                    Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
+                }
+            }
+        }
 
         static void Main(string[] args)
         {
