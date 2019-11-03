@@ -497,7 +497,7 @@ namespace _2_TaskTwo
         {
             internal ManagerOfTherapyAreas() { }
             internal ManagerOfTherapyAreas(ref Reception rhs) : base(ref rhs) { }
-            internal bool AddTherapyArea(ref string error, int id, string title, List<int> diagnosesId)
+            internal void AddTherapyArea(int id, string title, List<int> diagnosesId)
             {
                 if (!therapyAreas.ContainsKey(id))
                 {
@@ -509,31 +509,25 @@ namespace _2_TaskTwo
                     {
                         if (!diagnoses.ContainsKey(el))
                         {
-                            error = "no diagnoses with such id";
-                            return false;
+                            throw new System.InvalidOperationException("no diagnosis with such id");
                         }
                     }
                     therapyAreas[id] = new Tuple<string, List<int>>(title, diagnosesId);
-                    return true;
                 }
                 else
                 {
-                    error = "therapy area with such is has already exist";
-                    return false;
+                    throw new System.InvalidOperationException("therapy area with such is has already exist");
                 }
             }
-        
-            internal bool GetTherapyAreaById(ref string error, int id, ref Tuple<string, List<int>> outVal)
+            internal void GetTherapyAreaById(int id, ref Tuple<string, List<int>> outVal)
             {
                 if (therapyAreas.ContainsKey(id))
                 {
                     outVal = therapyAreas[id];
-                    return true;
                 }
                 else
                 {
-                    error = "no therapyArea with such id";
-                    return false;
+                    throw new System.InvalidOperationException("no therapyArea with such id");
                 }
             }
         }
@@ -854,66 +848,41 @@ namespace _2_TaskTwo
             void managerOfTherapyAreas()
             {
                 ManagerOfTherapyAreas manager = new ManagerOfTherapyAreas(ref rep);
-                string error = "";
                 Console.WriteLine("You are in Manager of therapyAreas mode now");
 
                 while (true)
                 {
                     Console.WriteLine("Choose operation");
                     string operation = Console.ReadLine();
-                    if (operation == "add")
+
+                    try
                     {
-                        Console.WriteLine("enter id of therapyAreas, its title and diagnosesId");
-                        string enter = Console.ReadLine();
-                        int id;
-                        if (!int.TryParse(enter, out id))
+                        if (operation == "add")
                         {
-                            Console.WriteLine("incorrect input");
-                            continue;
-                        }
-                        string title = Console.ReadLine();
-                        enter = Console.ReadLine();
-                        string[] diagnosesId_ = enter.Split(" ");
-                        List<int> diagnosesId = new List<int>();
-                        for (int i = 0; i < diagnosesId_.Length; i++)
-                        {
-                            int buf = 0;
-                            if (!int.TryParse(diagnosesId_[i], out buf))
+                            Console.WriteLine("enter id of therapyAreas, its title and diagnosesId");
+                            string enter = Console.ReadLine();
+                            int id = int.Parse(enter);
+                            string title = Console.ReadLine();
+                            enter = Console.ReadLine();
+                            string[] diagnosesId_ = enter.Split(" ");
+                            List<int> diagnosesId = new List<int>();
+                            for (int i = 0; i < diagnosesId_.Length; i++)
                             {
-                                Console.WriteLine("incorrect input");
-                                continue;
+                                diagnosesId.Add(int.Parse(diagnosesId_[i]));
                             }
-                            else
-                            {
-                                diagnosesId.Add(buf);
-                            }
-                            continue;
-                        }
-                        if (manager.AddTherapyArea(ref error, id, title, diagnosesId))
-                        {
-                            Console.WriteLine(error);
-                            continue;
-                        }
-                        else
-                        {
+
+                            manager.AddTherapyArea(id, title, diagnosesId);
                             Console.WriteLine("therapyArea was added");
                             continue;
                         }
-                    }
-                    if (operation == "getById")
-                    {
-                        //GetTherapyAreaById(ref string error, int id, ref Tuple<string, List<int>> outVal)
-                        Console.WriteLine("enter id of therapyArea");
-                        string enter = Console.ReadLine();
-                        int id = -1;
-                        if (!int.TryParse(enter, out id))
+                        if (operation == "getById")
                         {
-                            Console.WriteLine("incorrect input");
-                            continue;
-                        }
-                        Tuple<string, List<int>> therapyArea = new Tuple<string, List<int>>("", new List<int>());
-                        if (manager.GetTherapyAreaById(ref error, id, ref therapyArea))
-                        {
+                            Console.WriteLine("enter id of therapyArea");
+                            string enter = Console.ReadLine();
+                            int id = int.Parse(enter);
+                            Tuple<string, List<int>> therapyArea = new Tuple<string, List<int>>("", new List<int>());
+
+                            manager.GetTherapyAreaById(id, ref therapyArea);
                             Console.Write(therapyArea.Item1 + "  ");
                             for (int i = 0; i < therapyArea.Item2.Count; i++)
                             {
@@ -921,15 +890,14 @@ namespace _2_TaskTwo
                             }
                             continue;
                         }
-                        else
+                        if (operation == "goBack")
                         {
-                            Console.WriteLine(error);
-                            continue;
+                            return;
                         }
                     }
-                    if (operation == "goBack")
+                    catch (Exception exc)
                     {
-                        return;
+                        Console.WriteLine(exc.Message);
                     }
                     Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                 }
