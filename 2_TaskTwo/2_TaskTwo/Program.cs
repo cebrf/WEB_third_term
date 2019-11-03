@@ -92,15 +92,30 @@ namespace _2_TaskTwo
                 therapyAreas = new Dictionary<int, Tuple<string, List<int>>>()
                 {
                     { 1, new Tuple<string, List<int>>("Pulmonologist", new List<int>() { 0, 1, 2 } ) },
-                    { 2, new Tuple<string, List<int>>("Surgeon", new List<int>() { } ) },
-                    { 3, new Tuple<string, List<int>>("Rheumatologist", new List<int>() { } ) },
-                    { 4, new Tuple<string, List<int>>("Neurologist", new List<int>() { } ) },
+                    { 2, new Tuple<string, List<int>>("Psychiatrist", new List<int>() { 16, 17, 14, 13 } ) },
+                    { 3, new Tuple<string, List<int>>("Rheumatologist", new List<int>() { 31, 32, 33 } ) },
+                    { 4, new Tuple<string, List<int>>("Neurologist", new List<int>() { 24, 25, 26, 27 } ) },
+                    { 8, new Tuple<string, List<int>>("Oncologist", new List<int>() { 2, 5, 6, 7 } ) },
                 };
                 diagnoses = new Dictionary<int, Diagnosis>()
                 {
                     { 0, new Diagnosis(0, "pneumonia", 50) },
                     { 1, new Diagnosis(1, "tuberculosis", 66) },
                     { 2, new Diagnosis(2, "lung cancer", 83) },
+                    { 5, new Diagnosis(5, "blood cancer", 84) },
+                    { 6, new Diagnosis(6, "bone cancer", 84) },
+                    { 7, new Diagnosis(7, "brain cancer", 84) },
+                    { 17, new Diagnosis(17, "post-traumatic stress disorder", 39) },
+                    { 14, new Diagnosis(14, "parasomnias", 42) },
+                    { 16, new Diagnosis(16, "narcolepsy", 47) },
+                    { 13, new Diagnosis(13, "schizophrenia", 66) },
+                    { 24, new Diagnosis(24, "encephalitis", 67) },
+                    { 25, new Diagnosis(25, "meningitis", 54) },
+                    { 26, new Diagnosis(26, "brain abscesses", 78) },
+                    { 27, new Diagnosis(27, "epilepsy", 52) },
+                    { 31, new Diagnosis(31, "lupus", 65) },
+                    { 32, new Diagnosis(32, "scleroderma", 67) },
+                    { 33, new Diagnosis(33, "arthritis", 52) },
                 };
                 doctors = new Dictionary<int, Doctor>()
                 {
@@ -108,6 +123,8 @@ namespace _2_TaskTwo
                     { 1, new Specialist(1, 2) },
                     { 3, new Specialist(3, 4) },
                     { 5, new Therapist(5) },
+                    { 14, new Specialist(14, 3) },
+                    { 17, new Specialist(17, 1) },
                 };
                 specialistsNumber = 2;
                                 
