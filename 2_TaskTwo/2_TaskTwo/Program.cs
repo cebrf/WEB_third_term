@@ -419,7 +419,7 @@ namespace _2_TaskTwo
                 }
             }
 
-            internal bool GetAppointmentsForDoctor(ref string error, int id, ref Dictionary<DateTime, Dictionary<int, int>> outVal)
+            internal bool GetAppointmentsOfDoctor(ref string error, int id, ref Dictionary<DateTime, Dictionary<int, int>> outVal)
             {
                 if (doctors.ContainsKey(id))
                 {
@@ -467,7 +467,14 @@ namespace _2_TaskTwo
                 if (GetPatient(ref error, dateTime, doctorId, ref patientId))
                 {
                     appointments[dateTime.Date][doctorId].Remove(dateTime.Hour);
-                    patients.Remove(patientId);
+                    if (patients[patientId].diagnosisId == 1)
+                    {
+                        patients.Remove(patientId);
+                    }
+                    else
+                    {
+                        patients[patientId].diagnosisId--;
+                    }
                     return true;
                 }
                 else
@@ -482,9 +489,10 @@ namespace _2_TaskTwo
                 int patientId = -1;
                 if (GetPatient(ref error, prevDateTime, doctorId, ref patientId))
                 {
+                    Patient patient = patients[patientId]; 
                     if (DeleteAppointment(ref error, prevDateTime, doctorId))
                     {
-                        if (AddAppointment(ref error, patients[patientId], doctorId, newDateTime))
+                        if (AddAppointment(ref error, patient, doctorId, newDateTime))
                         {
                             return true;
                         }
@@ -871,7 +879,6 @@ namespace _2_TaskTwo
                     }
                     if (operation == "getById")
                     {
-                        //GetDiagnosisById(ref string error, int id, ref Diagnosis outVal)
                         Console.WriteLine("enter id of diagnosis");
                         string enter = Console.ReadLine();
                         int id = -1;
@@ -1090,12 +1097,242 @@ namespace _2_TaskTwo
                 string error = "";
                 Console.WriteLine("You are in Manager of appointments mode now");
 
-                while(true)
+                while (true)
                 {
                     Console.WriteLine("Choose operation");
                     string operation = Console.ReadLine();
-                    
+                    if (operation == "add")
+                    {
+                        Console.WriteLine("enter id of patient");
+                        string enter = Console.ReadLine();
+                        int id = -1;
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        Patient patient = new Patient(id);
 
+                        Console.WriteLine("enter id of doctor");
+                        int doctorId = -1;
+                        enter = Console.ReadLine();
+                        if (enter != "-")
+                        {
+                            if (!int.TryParse(enter, out doctorId))
+                            {
+                                Console.WriteLine("incorrect input");
+                                continue;
+                            }
+                        }
+
+                        Console.WriteLine("enter date (yy/mm/dd hh)");
+                        enter = Console.ReadLine() + ":00:00";
+                        DateTime dateTime = new DateTime();
+                        if (enter == "-")
+                        {
+                            if (manager.AddAppointment(ref error, patient, doctorId))
+                            {
+                                Console.WriteLine("new appointment was added");
+                                continue;
+                            }
+                            else
+                            {
+                                Console.WriteLine(error);
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            if (!DateTime.TryParse(enter, out dateTime))
+                            {
+                                Console.WriteLine("incorrect input");
+                                continue;
+                            }
+
+                            if (manager.AddAppointment(ref error, patient, doctorId, dateTime))
+                            {
+                                Console.WriteLine("new appointment was added");
+                                continue;
+                            }
+                            else
+                            {
+                                Console.WriteLine(error);
+                                continue;
+                            }
+                        }
+                    }
+                    if (operation == "getAppointmentsForDay")
+                    {
+                        Console.WriteLine("enter date (dd-mm-yy)");
+                        string enter = Console.ReadLine();
+                        DateTime dateTime = new DateTime();
+                        if (!DateTime.TryParse(enter, out dateTime))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        Dictionary<int, Dictionary<int, int>> outVal = new Dictionary<int, Dictionary<int, int>>();
+                        if (manager.GetAppointmentsForDay(ref error, dateTime, ref outVal))
+                        {
+                            foreach(KeyValuePair<int, Dictionary<int, int>> doctorAppoint in outVal)
+                            {
+                                Console.Write(doctorAppoint.Key + "  ");
+                                foreach(KeyValuePair<int, int> appoint in doctorAppoint.Value)
+                                {
+                                    Console.Write(appoint.Key + " " + appoint.Value);
+                                }
+                                Console.WriteLine();
+                            }
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                    }
+                    if (operation == "getAppointmentsOfDoctor")
+                    {
+                        Console.WriteLine("enter id of doctor");
+                        string enter = Console.ReadLine();
+                        int id = -1;
+                        if (!int.TryParse(enter, out id))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+                        Dictionary<DateTime, Dictionary<int, int>> appointmentsOfDoctor = new Dictionary<DateTime, Dictionary<int, int>>();
+                        if (manager.GetAppointmentsOfDoctor(ref error, id, ref appointmentsOfDoctor))
+                        {
+                            foreach (KeyValuePair<DateTime, Dictionary<int, int>> day in appointmentsOfDoctor)
+                            {
+                                Console.Write(day.Key + ":  ");
+                                foreach (KeyValuePair<int, int> el in day.Value)
+                                {
+                                    Console.Write(el.Key + "-" + el.Value + "; ");
+                                }
+                                Console.WriteLine();
+                            }
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                    }
+                    if (operation == "GetPatient")
+                    {
+                        Console.WriteLine("enter date (yy/mm/dd hh)");
+                        string enter = Console.ReadLine() + ":00:00";
+                        DateTime dateTime = new DateTime();
+                        if (!DateTime.TryParse(enter, out dateTime))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+
+                        Console.WriteLine("enter id of doctor");
+                        int doctorId = -1;
+                        enter = Console.ReadLine();
+                        if (enter != "-")
+                        {
+                            if (!int.TryParse(enter, out doctorId))
+                            {
+                                Console.WriteLine("incorrect input");
+                                continue;
+                            }
+                        }
+
+                        int patientId = 0;
+                        if (manager.GetPatient(ref error, dateTime, doctorId, ref patientId))
+                        {
+                            Console.WriteLine("patient id is " + patientId);
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                    }
+                    if (operation == "delete")
+                    {
+                        Console.WriteLine("enter date (yy/mm/dd hh)");
+                        string enter = Console.ReadLine() + ":00:00";
+                        DateTime dateTime = new DateTime();
+                        if (!DateTime.TryParse(enter, out dateTime))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+
+                        Console.WriteLine("enter id of doctor");
+                        int doctorId = -1;
+                        enter = Console.ReadLine();
+                        if (enter != "-")
+                        {
+                            if (!int.TryParse(enter, out doctorId))
+                            {
+                                Console.WriteLine("incorrect input");
+                                continue;
+                            }
+                        }
+
+                        if (manager.DeleteAppointment(ref error, dateTime, doctorId))
+                        {
+                            Console.WriteLine("appointment was deleted");
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                    }
+                    if (operation == "changeDateTime")
+                    {
+                        Console.WriteLine("enter previous date (yy/mm/dd hh)");
+                        string enter = Console.ReadLine() + ":00:00";
+                        DateTime prevDateTime = new DateTime();
+                        if (!DateTime.TryParse(enter, out prevDateTime))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+
+                        Console.WriteLine("enter id of doctor");
+                        int doctorId = -1;
+                        enter = Console.ReadLine();
+                        if (enter != "-")
+                        {
+                            if (!int.TryParse(enter, out doctorId))
+                            {
+                                Console.WriteLine("incorrect input");
+                                continue;
+                            }
+                        }
+
+                        Console.WriteLine("enter new date (yy/mm/dd hh)");
+                        enter = Console.ReadLine() + ":00:00";
+                        DateTime newDateTime = new DateTime();
+                        if (!DateTime.TryParse(enter, out newDateTime))
+                        {
+                            Console.WriteLine("incorrect input");
+                            continue;
+                        }
+
+                        if (manager.ChangeAppointment(ref error, prevDateTime, doctorId, newDateTime))
+                        {
+                            Console.WriteLine("appointment was changed");
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine(error);
+                            continue;
+                        }
+                    }
                     if (operation == "goBack")
                     {
                         return;
