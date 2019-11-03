@@ -122,7 +122,7 @@ namespace _2_TaskTwo
                 return true;
             }
 
-            protected void addDoctor(int id = -1, int therapyAreaId = -1) // TODO принимает тип Doctor
+            protected void addDoctor(int id = -1, int therapyAreaId = -1)
             {
                 if (id == -1)
                 {
@@ -265,43 +265,38 @@ namespace _2_TaskTwo
         {
             internal ManagerOfDoctors() { }
             internal ManagerOfDoctors(ref Reception rhs) : base(ref rhs) { }
-            internal bool AddDoctor(ref string error, int id, int therapyAreaId = -1)
+            internal void AddDoctor(int id, int therapyAreaId = -1)
             {
                 if (!doctors.ContainsKey(id))
                 {
                     if (therapyAreas.ContainsKey(therapyAreaId) || therapyAreaId == -1)
                     {
                         this.addDoctor(id, therapyAreaId);
-                        return true;
                     }
                     else
                     {
-                        error = "therapyArea with such id doesn't exist";
-                        return false;
+                        throw new System.InvalidOperationException("therapyArea with such id doesn't exist");
                     }
                 }
                 else
                 {
-                    error = "doctor with such id has already exist";
-                    return false;
+                    throw new System.InvalidOperationException("doctor with such id has already exist");
                 }
             }
 
-            internal bool GetDoctorById(ref string error, int id, ref Doctor outVal)
+            internal void GetDoctorById(int id, ref Doctor outVal)
             {
                 if (doctors.ContainsKey(id))
                 {
                     outVal = doctors[id];
-                    return true;
                 }
                 else
                 {
-                    error = "no doctor with such id";
-                    return false;
+                    throw new System.InvalidOperationException("no doctor with such id");
                 }
             }
 
-            internal bool GetDoctorsByTherapyAreaId (ref string error, ref List<Doctor> outVal, int id = -1)
+            internal void GetDoctorsByTherapyAreaId (ref List<Doctor> outVal, int id = -1)
             {
                 if (id >= 0 && id < therapyAreas.Count)
                 {
@@ -319,13 +314,11 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    error = "no area with such id";
-                    return false;
+                    throw new System.InvalidOperationException("no area with such id");
                 }
-                return true;
             }
 
-            internal bool DeleteDoctor (ref string error, int id)
+            internal void DeleteDoctor (int id)
             {                
                 if (doctors.ContainsKey(id))
                 {
@@ -338,11 +331,8 @@ namespace _2_TaskTwo
                 }
                 else
                 {
-                    error = "no doctor with such id";
-                    return false;
+                    throw new System.InvalidOperationException("no doctor with such id");
                 }
-
-                return true;
             }
         }
 
@@ -649,7 +639,7 @@ namespace _2_TaskTwo
             rep.CreateNewModel();
             while (true)
             {
-                Console.WriteLine("You are in Console mod now\nChoose operating mode.\nManager of: doctors(1), therapyAreas(2), diagnosis(3), appointments(4)");
+                Console.WriteLine("You are in Console mod now\nChoose operating mode.\nManager of: doctors(1), therapyAreas(2), diagnosis(3), appointments(4)\n");
                 string mode = Console.ReadLine();
                 if (mode == "doctors" || mode == "1")
                 {
@@ -669,6 +659,7 @@ namespace _2_TaskTwo
                 if (mode == "appointments" || mode == "4")
                 {
                     managerOfAppointments();
+                    continue;
                 }
                 Console.WriteLine(mode + " is not an internal or external command, executable program, or batch file. Choose another operation");
             }
@@ -676,7 +667,6 @@ namespace _2_TaskTwo
             void managerOfDoctorsMode()
             {
                 ManagerOfDoctors manager = new ManagerOfDoctors(ref rep);
-                string error = "";
                 Console.WriteLine("You are in Manager of doctors mode now");
 
                 while (true)
@@ -684,138 +674,85 @@ namespace _2_TaskTwo
                     Console.WriteLine("Choose operation");
                     string operation = Console.ReadLine();
 
-                    if (operation == "add")
+                    try
                     {
-                        Console.WriteLine("enter id of doctor and his therapyAreaId");
-                        string enter = Console.ReadLine();
-                        int id = -1, therapyAreaId = -1;
-                        if (!int.TryParse(enter, out id))
+                        if (operation == "add")
                         {
-                            Console.WriteLine("incorrect input");
-                            continue;
-                        }
-                        enter = Console.ReadLine();
-                        if (enter == "-")
-                        {
-                            if (!manager.AddDoctor(ref error, id))
+                            Console.WriteLine("enter id of doctor and his therapyAreaId");
+                            string enter = Console.ReadLine();
+                            int id = int.Parse(enter);
+
+                            enter = Console.ReadLine();
+                            int therapyAreaId;
+                            if (enter == "-")
                             {
-                                Console.WriteLine(error);
-                                continue;
+                                manager.AddDoctor(id);
+                                Console.WriteLine("doctor was added");
                             }
                             else
                             {
+                                therapyAreaId = int.Parse(enter);
+                                manager.AddDoctor(id, therapyAreaId);
                                 Console.WriteLine("doctor was added");
-                                continue;
                             }
-                        }
-                        else
-                        {
-                            if (!int.TryParse(enter, out therapyAreaId))
-                            {
-                                Console.WriteLine("incorrect input");
-                                continue;
-                            }
-                            if (!manager.AddDoctor(ref error, id, therapyAreaId))
-                            {
-                                Console.WriteLine(error);
-                                continue;
-                            }
-                            else
-                            {
-                                Console.WriteLine("doctor was added");
-                                continue;
-                            }
-                        }
-                    }
-                    if (operation == "getById")
-                    {
-                        Console.WriteLine("enter id of doctor");
-                        string enter = Console.ReadLine();
-                        int id = -1;
-                        if (!int.TryParse(enter, out id))
-                        {
-                            Console.WriteLine("incorrect input");
                             continue;
                         }
-                        Doctor doc = new Doctor();
-                        if (manager.GetDoctorById(ref error, id, ref doc))
+                        if (operation == "getById")
                         {
+                            Console.WriteLine("enter id of doctor");
+                            string enter = Console.ReadLine();
+                            int id = int.Parse(enter);
+
+                            Doctor doc = new Doctor();
+                            manager.GetDoctorById(id, ref doc);
                             if (doc is Therapist)
                                 Console.WriteLine(((Therapist)doc).id + " therapist");
                             else
                                 Console.WriteLine(((Specialist)doc).id + " " + manager.TherapyAreas[((Specialist)doc).therapyAreaId].Item1);
                             continue;
                         }
-                        else
+                        if (operation == "getByTherapyAreaId")
                         {
-                            Console.WriteLine(error);
-                            continue;
-                        }
-                    }
-                    if (operation == "getByTherapyAreaId")
-                    {
-                        Console.WriteLine("enter id of therapyArea");
-                        List<Doctor> docs = new List<Doctor>();
-                        string enter = Console.ReadLine();
-                        int id = -1;
-                        if (enter == "-")
-                        {
-                            if (!manager.GetDoctorsByTherapyAreaId(ref error, ref docs))
+                            Console.WriteLine("enter id of therapyArea");
+                            List<Doctor> docs = new List<Doctor>();
+                            string enter = Console.ReadLine();
+                            int id = -1;
+                            if (enter == "-")
                             {
-                                Console.WriteLine(error);
-                                continue;
-                            }
-                        }
-                        else if (int.TryParse(enter, out id))
-                        {
-                            if (!manager.GetDoctorsByTherapyAreaId(ref error, ref docs, id))
-                            {
-                                Console.WriteLine(error);
-                                continue;
+                                manager.GetDoctorsByTherapyAreaId(ref docs);
                             }
                             else
                             {
+                                id = int.Parse(enter);
+                                manager.GetDoctorsByTherapyAreaId(ref docs, id);
+
                                 for (int i = 0; i < docs.Count; i++)
                                 {
                                     if (docs[i] is Therapist)
                                         Console.WriteLine(((Therapist)docs[i]).id + " therapist");
                                     else
                                         Console.WriteLine(((Specialist)docs[i]).id + " " + manager.TherapyAreas[((Specialist)docs[i]).therapyAreaId].Item1);
-                                    continue;
                                 }
                             }
-                        }
-                        else
-                        {
-                            Console.WriteLine("incorrect input");
                             continue;
                         }
-
-                    }
-                    if (operation == "delete")
-                    {
-                        Console.WriteLine("enter id of doctor");
-                        string enter = Console.ReadLine();
-                        int id = -1;
-                        if (!int.TryParse(enter, out id))
+                        if (operation == "delete")
                         {
-                            Console.WriteLine("incorrect input");
-                            continue;
-                        }
-                        if (manager.DeleteDoctor(ref error, id))
-                        {
+                            Console.WriteLine("enter id of doctor");
+                            string enter = Console.ReadLine();
+                            int id = int.Parse(enter);
+                            manager.DeleteDoctor(id);
                             Console.WriteLine("Doctor deleted");
                             continue;
                         }
-                        else
+                        if (operation == "goBack")
                         {
-                            Console.WriteLine(error);
-                            continue;
+                            return;
                         }
                     }
-                    if (operation == "goBack")
+                    catch (Exception exc)
                     {
-                        return;
+                        Console.WriteLine(exc.Message);
                     }
                     Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                 }
@@ -1090,7 +1027,6 @@ namespace _2_TaskTwo
                 }
             }
 
-
             void managerOfAppointments()
             {
                 ManagerOfAppointments manager = new ManagerOfAppointments(ref rep);
@@ -1345,6 +1281,32 @@ namespace _2_TaskTwo
         static void Main(string[] args)
         {
             ConsoleMode();
+
+            try
+            {
+                int a = 0;
+                if (a == 0)
+                {
+                    throw new System.AccessViolationException("Logfile cannot be read-only");
+                }
+                Console.WriteLine("bad news");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            Console.WriteLine("I am still alive!");
+
+
+
+
+
+
+
+
+
+
+
             /*Reception rep = new Reception();
             if (rep.CreateNewModel())
                 Console.WriteLine("new model created");
