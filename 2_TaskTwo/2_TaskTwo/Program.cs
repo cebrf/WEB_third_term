@@ -87,8 +87,7 @@ namespace _2_TaskTwo
                 this.appointments = rhs.appointments;
                 this.specialistsNumber = rhs.specialistsNumber;
             }
-
-            internal bool CreateNewModel()
+            internal void CreateNewModel()
             {
                 therapyAreas = new Dictionary<int, Tuple<string, List<int>>>()
                 {
@@ -118,10 +117,7 @@ namespace _2_TaskTwo
                 {
                     addDay();
                 }
-
-                return true;
             }
-
             protected void addDoctor(int id = -1, int therapyAreaId = -1)
             {
                 if (id == -1)
@@ -140,7 +136,6 @@ namespace _2_TaskTwo
                     specialistsNumber++;
                 }
             }
-
             void addDay()
             {
                 lastDay = lastDay.AddDays(1);
@@ -151,8 +146,7 @@ namespace _2_TaskTwo
                     appointments[lastDay][doc.Value.id] = new Dictionary<int, int>();
                 }
             }
-            
-            internal bool NextDay()
+            internal void NextDay()
             {
                 DateTime currentDay = firstDay;
                 firstDay = firstDay.AddDays(1);
@@ -168,13 +162,11 @@ namespace _2_TaskTwo
                             int diagnosisId = ((Specialist)doc.Value).EstablishDiagnosis(patients[patientId], diagnoses.Count);
                             patients[patientId].diagnosisId = diagnoses.ElementAt(diagnosisId).Key;
                             
-                            Console.WriteLine(patients[patientId].id + "  has  " + diagnoses[patients[patientId].diagnosisId].title);
-                            //TODO выводим информацию в консоль
+                            Console.WriteLine(patients[patientId].id + "  has  " + diagnoses[patients[patientId].diagnosisId].title + "  (doctor " + doc.Key + " " + therapyAreas[((Specialist)doc.Value).therapyAreaId].Item1 + ")");
 
                             patients[patientId].diagnosisId--;
                             if (patients[patientId].diagnosisId == 0)
                                 patients.Remove(patientId);
-                            //TODO добавить пациенту поле Кол-во записей и удалять пациента только, если записей больше нет
                         }
                         else
                         {
@@ -204,9 +196,7 @@ namespace _2_TaskTwo
                 }
 
                 appointments.Remove(currentDay);
-                return true;
             }
-
             protected bool addAppointment(Patient patient, int doctorId)
             {
                 DateTime currentDay = firstDay;
@@ -229,7 +219,6 @@ namespace _2_TaskTwo
                 }
                 return false;
             }
-
             protected void addAppointment(Patient patient, int doctorId, DateTime dateTime)
             {
                 if (appointments[dateTime.Date][doctorId].ContainsKey(dateTime.Hour))
@@ -259,10 +248,8 @@ namespace _2_TaskTwo
             protected Dictionary<int, Diagnosis> diagnoses;
 
             protected Dictionary<DateTime, Dictionary<int, Dictionary<int, int>>> appointments = new Dictionary<DateTime, Dictionary<int, Dictionary<int, int>>>();
-            //день: { { id доктора, словарь записей на прием (время приема, id пациента) }, { ... }, { ... }, ... }
-            //время приема целое число часов, с 9 до 19 в формате чч:00
         }
-
+        
         class ManagerOfDoctors : Reception
         {
             internal ManagerOfDoctors() { }
@@ -299,7 +286,7 @@ namespace _2_TaskTwo
             }
             internal void GetDoctorsByTherapyAreaId (ref List<Doctor> outVal, int id = -1)
             {
-                if (id >= 0 && id < therapyAreas.Count)
+                if (therapyAreas.ContainsKey(id))
                 {
                     foreach (KeyValuePair<int, Doctor> doc in doctors)
                     {
@@ -383,13 +370,18 @@ namespace _2_TaskTwo
             }
             internal void GetAppointmentsForDay(DateTime dateTime, ref Dictionary<int, Dictionary<int, int>> outVal)
             {
+                if (dateTime.Date < firstDay.Date)
+                    throw new System.InvalidOperationException("you can't get the appointment for past days");
+                if (dateTime.Date > lastDay.Date)
+                    throw new System.InvalidOperationException("appointments are open only 10 days in advance. Choose another day");
+
                 if (appointments.ContainsKey(dateTime.Date))
                 {
                     outVal = appointments[dateTime.Date];
                 }
                 else
                 {
-                    throw new System.InvalidOperationException("empty appointment");
+                    throw new System.InvalidOperationException("empty day");
                 }
             }
             internal void GetAppointmentsOfDoctor(int id, ref Dictionary<DateTime, Dictionary<int, int>> outVal)
@@ -416,7 +408,7 @@ namespace _2_TaskTwo
                     throw new System.InvalidOperationException("appointments are open only 10 days in advance. Choose another day");
                 if (dateTime.Hour < 9 || dateTime.Hour > 19)
                     throw new System.InvalidOperationException("clinic is closed at that time");
-                if (appointments[dateTime.Date][doctorId].ContainsKey(dateTime.Hour))
+                if (!appointments[dateTime.Date][doctorId].ContainsKey(dateTime.Hour))
                     throw new System.InvalidOperationException("no such appointment");
 
                 outVal = appointments[dateTime.Date][doctorId][dateTime.Hour];
@@ -437,11 +429,13 @@ namespace _2_TaskTwo
             }
             internal void ChangeAppointment(DateTime prevDateTime, int doctorId, DateTime newDateTime)
             {
-                int patientId = -1;
-                GetPatient(prevDateTime, doctorId, ref patientId);
-                Patient patient = patients[patientId];
-                DeleteAppointment(prevDateTime, doctorId);
-                AddAppointment(patient, doctorId, newDateTime);
+                if (prevDateTime != newDateTime)
+                {
+                    int patientId = -1;
+                    GetPatient(prevDateTime, doctorId, ref patientId);
+                    AddAppointment(patients[patientId], doctorId, newDateTime);
+                    DeleteAppointment(prevDateTime, doctorId);
+                }
             }
         }
 
@@ -593,6 +587,10 @@ namespace _2_TaskTwo
                     managerOfAppointments();
                     continue;
                 }
+                if (mode == "exit")
+                {
+                    return;
+                }
                 Console.WriteLine(mode + " is not an internal or external command, executable program, or batch file. Choose another operation");
             }
 
@@ -608,6 +606,11 @@ namespace _2_TaskTwo
 
                     try
                     {
+                        if (operation == "nextDay")
+                        {
+                            nextDay(manager);
+                            continue;
+                        }
                         if (operation == "add")
                         {
                             Console.WriteLine("enter id of doctor and his therapyAreaId");
@@ -681,12 +684,12 @@ namespace _2_TaskTwo
                         {
                             return;
                         }
+                        Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                     }
                     catch (Exception exc)
                     {
                         Console.WriteLine(exc.Message);
                     }
-                    Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                 }
             }
 
@@ -702,6 +705,11 @@ namespace _2_TaskTwo
 
                     try
                     {
+                        if (operation == "nextDay")
+                        {
+                            nextDay(manager);
+                            continue;
+                        }
                         if (operation == "add")
                         {
                             Console.WriteLine("enter id of diagnosis, its title and deathRate");
@@ -789,12 +797,12 @@ namespace _2_TaskTwo
                         {
                             return;
                         }
+                        Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                     }
                     catch (Exception exc)
                     {
                         Console.WriteLine(exc.Message);
                     }
-                    Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                 }
             }
 
@@ -810,6 +818,11 @@ namespace _2_TaskTwo
 
                     try
                     {
+                        if (operation == "nextDay")
+                        {
+                            nextDay(manager);
+                            continue;
+                        }
                         if (operation == "add")
                         {
                             Console.WriteLine("enter id of therapyAreas, its title and diagnosesId");
@@ -847,12 +860,12 @@ namespace _2_TaskTwo
                         {
                             return;
                         }
+                        Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                     }
                     catch (Exception exc)
                     {
                         Console.WriteLine(exc.Message);
                     }
-                    Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                 }
             }
 
@@ -868,6 +881,11 @@ namespace _2_TaskTwo
 
                     try
                     {
+                        if (operation == "nextDay")
+                        {
+                            nextDay(manager);
+                            continue;
+                        }
                         if (operation == "add")
                         {
                             Console.WriteLine("enter id of patient");
@@ -882,7 +900,7 @@ namespace _2_TaskTwo
                                 doctorId = int.Parse(enter);
 
                             Console.WriteLine("enter date (yy/mm/dd hh)");
-                            enter = Console.ReadLine() + ":00:00";
+                            enter = Console.ReadLine();
                             DateTime dateTime = new DateTime();
                             if (enter == "-")
                             {
@@ -890,6 +908,7 @@ namespace _2_TaskTwo
                             }
                             else
                             {
+                                enter += ":00:00";
                                 dateTime = DateTime.Parse(enter);
                                 manager.AddAppointment(patient, doctorId, dateTime);
                             }
@@ -898,7 +917,7 @@ namespace _2_TaskTwo
                         }
                         if (operation == "getAppointmentsForDay")
                         {
-                            Console.WriteLine("enter date (dd-mm-yy)");
+                            Console.WriteLine("enter date (yy/mm/dd)");
                             string enter = Console.ReadLine();
                             DateTime dateTime = DateTime.Parse(enter);
                             Dictionary<int, Dictionary<int, int>> outVal = new Dictionary<int, Dictionary<int, int>>();
@@ -906,10 +925,17 @@ namespace _2_TaskTwo
                             manager.GetAppointmentsForDay(dateTime, ref outVal);
                             foreach (KeyValuePair<int, Dictionary<int, int>> doctorAppoint in outVal)
                             {
-                                Console.Write(doctorAppoint.Key + "  ");
-                                foreach (KeyValuePair<int, int> appoint in doctorAppoint.Value)
+                                Console.Write(doctorAppoint.Key + ":  ");
+                                if (doctorAppoint.Value.Count == 0)
                                 {
-                                    Console.Write(appoint.Key + " " + appoint.Value);
+                                    Console.Write("empty");
+                                }
+                                else
+                                {
+                                    foreach (KeyValuePair<int, int> appoint in doctorAppoint.Value)
+                                    {
+                                        Console.Write(appoint.Key + ":00  -  " + appoint.Value);
+                                    }
                                 }
                                 Console.WriteLine();
                             }
@@ -925,10 +951,15 @@ namespace _2_TaskTwo
                             manager.GetAppointmentsOfDoctor(id, ref appointmentsOfDoctor);
                             foreach (KeyValuePair<DateTime, Dictionary<int, int>> day in appointmentsOfDoctor)
                             {
-                                Console.Write(day.Key + ":  ");
-                                foreach (KeyValuePair<int, int> el in day.Value)
+                                Console.Write(day.Key.Date + ":  ");
+                                if (day.Value.Count == 0)
+                                    Console.Write("empty");
+                                else
                                 {
-                                    Console.Write(el.Key + "-" + el.Value + "; ");
+                                    foreach (KeyValuePair<int, int> el in day.Value)
+                                    {
+                                        Console.Write(el.Key + ":00 - " + el.Value + ", ");
+                                    }
                                 }
                                 Console.WriteLine();
                             }
@@ -966,6 +997,7 @@ namespace _2_TaskTwo
                             string enter = Console.ReadLine() + ":00:00";
                             DateTime prevDateTime = DateTime.Parse(enter);
                             Console.WriteLine("enter id of doctor");
+                            enter = Console.ReadLine();
                             int doctorId = int.Parse(enter);
                             Console.WriteLine("enter new date (yy/mm/dd hh)");
                             enter = Console.ReadLine() + ":00:00";
@@ -979,102 +1011,24 @@ namespace _2_TaskTwo
                         {
                             return;
                         }
+                        Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                     }
                     catch (Exception exc)
                     {
                         Console.WriteLine(exc.Message);
                     }
-                    Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                 }
+            }
+        
+            void nextDay(Reception reception)
+            {
+                reception.NextDay();
             }
         }
 
         static void Main(string[] args)
         {
             ConsoleMode();
-
-            try
-            {
-                int a = 0;
-                if (a == 0)
-                {
-                    throw new System.AccessViolationException("Logfile cannot be read-only");
-                }
-                Console.WriteLine("bad news");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            Console.WriteLine("I am still alive!");
-
-
-
-
-
-
-
-
-
-
-
-            /*Reception rep = new Reception();
-            if (rep.CreateNewModel())
-                Console.WriteLine("new model created");
-
-            Patient leaf = new Patient(1);
-            Patient leafi = new Patient(0);
-
-            ManagerOfAppointments appointments = new ManagerOfAppointments(ref rep);
-            if (!appointments.AddAppointment(leaf, 1))
-                Console.WriteLine("Not ok 1");
-
-            if (!appointments.AddAppointment(leafi, 1, new DateTime(2019, 11, 1, 16, 0, 0)))
-                Console.WriteLine("Not ok 2");
-
-
-            ManagerOfDoctors manager = new ManagerOfDoctors(ref rep);
-            Doctor doc = new Doctor();
-            if (manager.GetDoctorById(0, ref doc))
-                Console.WriteLine(doc.id);
-            else
-                Console.WriteLine("Not ok 3");
-
-            List<Doctor> docs = new List<Doctor>();
-            if (manager.GetDoctorsByTherapyAreaId(ref docs, 1))
-                for (int i = 0; i < docs.Count; i++)
-                    Console.WriteLine(docs[i].id);
-            else
-                Console.WriteLine("Not ok 4");
-
-            if (!manager.DeleteDoctor(0))
-                Console.WriteLine("Not ok 5");
-
-            if (manager.GetDoctorById(0, ref doc))
-                Console.WriteLine("Not ok 6");
-
-            Diagnosis diagnosis = new Diagnosis(0, "bebebe");
-            managerOfDiagnosis managDiagn = new managerOfDiagnosis(ref rep);
-            if (managDiagn.GetDiagnosisById(0, ref diagnosis))
-                Console.WriteLine(diagnosis.title);
-            else
-                Console.WriteLine("Not ok 7");
-
-            if (!managDiagn.DeleteDiagnosis(0))
-                Console.WriteLine("Not ok 8");
-
-            if (managDiagn.GetDiagnosisById(0, ref diagnosis))
-                Console.WriteLine("Not ok 9");
-
-
-
-            appointments.AddAppointment(new Patient(93));
-            appointments.AddAppointment(new Patient(95));
-            appointments.AddAppointment(new Patient(97), 1);
-            appointments.AddAppointment(new Patient(93), 3, new DateTime(2019, 11, 2, 16, 0, 0));
-
-            appointments.NextDay();
-            Console.WriteLine("End");*/
         }
     }
 }
