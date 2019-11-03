@@ -543,48 +543,41 @@ namespace _2_TaskTwo
             internal managerOfDiagnosis() { }
             internal managerOfDiagnosis(ref Reception rhs) : base(ref rhs) { }
 
-            internal bool AddDiagnosis(ref string error, int id, string title, int deathRate = 0)
+            internal void AddDiagnosis(int id, string title, int deathRate = 0)
             {
                 if (!diagnoses.ContainsKey(id))
                 {
                     diagnoses[id] = new Diagnosis(id, title, deathRate);
-                    return true;
                 }
                 else
                 {
-                    error = "diagnosis with such id has already exist";
-                    return false;
+                    throw new System.InvalidOperationException("diagnosis with such id has already exist");
                 }
             }
-            internal bool GetDiagnosisById(ref string error, int id, ref Diagnosis outVal)
+            internal void GetDiagnosisById(int id, ref Diagnosis outVal)
             {
                 if (diagnoses.ContainsKey(id))
                 {
                     outVal = diagnoses[id];
-                    return true;
                 }
                 else
                 {
-                    error = "no diagnosis with such id";
-                    return false;
+                    throw new System.InvalidOperationException("no diagnosis with such id");
                 }
             }
-            internal bool GetDiagnosesByTherapyAreaId(ref string error, int id, ref List<Diagnosis> outVal)
+            internal void GetDiagnosesByTherapyAreaId(int id, ref List<Diagnosis> outVal)
             {
                 if (therapyAreas.ContainsKey(id))
                 {
                     for (int i = 0; i < therapyAreas[id].Item2.Count; i++)
                         outVal.Add(diagnoses[therapyAreas[id].Item2[i]]);
-                    return true;
                 }
                 else
                 {
-                    error = "no therapyArea with such id";
-                    return false;
+                    throw new System.InvalidOperationException("no therapyArea with such id");
                 }
             }
-            
-            internal bool GetDiagnosesByDeathRate(ref string error, int deathRate, ref List<Diagnosis> outVal)
+            internal void GetDiagnosesByDeathRate(int deathRate, ref List<Diagnosis> outVal)
             {
                 outVal.Clear();
                 foreach (KeyValuePair<int, Diagnosis> pair in diagnoses)
@@ -594,27 +587,21 @@ namespace _2_TaskTwo
                 }
                 if (outVal.Count == 0)
                 {
-                    error = "no diagnoses with such death rate";
-                    return false;
+                    throw new System.InvalidOperationException("no diagnoses with such death rate");
                 }
-                return true;
             }
-
-            internal bool ChangeDeathRate(ref string error, int id, int newDeathRate)
+            internal void ChangeDeathRate(int id, int newDeathRate)
             {
                 if (diagnoses.ContainsKey(id))
                 {
                     diagnoses[id].deathRate = newDeathRate;
-                    return true;
                 }
                 else
                 {
-                    error = "no diagnosis with such id";
-                    return false;
+                    throw new System.InvalidOperationException("no diagnosis with such id");
                 }
             }
-
-            internal bool DeleteDiagnosis(ref string error, int id)
+            internal void DeleteDiagnosis(int id)
             {
                 if (diagnoses.ContainsKey(id))
                 {
@@ -623,12 +610,10 @@ namespace _2_TaskTwo
                         area.Value.Item2.Remove(id);
                     }
                     diagnoses.Remove(id);
-                    return true;
                 }
                 else
                 {
-                    error = "no diagnosis with such id";
-                    return false;
+                    throw new System.InvalidOperationException("no diagnosis with such id");
                 }
             }
         }
@@ -761,183 +746,106 @@ namespace _2_TaskTwo
             void managerOfDiagnosis()
             {
                 managerOfDiagnosis manager = new managerOfDiagnosis(ref rep);
-                string error = "";
                 Console.WriteLine("You are in Manager of diagnosis mode now");
 
                 while (true)
                 {
                     Console.WriteLine("Choose operation");
                     string operation = Console.ReadLine();
-                    if (operation == "add")
+
+                    try
                     {
-                        Console.WriteLine("enter id of diagnosis, its title and deathRate");
-                        int id = -1;
-                        string title;
-                        int deathRate = 0;
-                        string enter = Console.ReadLine();
-                        if (!int.TryParse(enter, out id))
+                        if (operation == "add")
                         {
-                            Console.WriteLine("incorrect input");
-                            continue;
-                        }
-                        title = Console.ReadLine();
-                        enter = Console.ReadLine();
-                        if (enter == "-")
-                        {
-                            if (!manager.AddDiagnosis(ref error, id, title))
+                            Console.WriteLine("enter id of diagnosis, its title and deathRate");
+                            string enter = Console.ReadLine();
+
+                            int id = int.Parse(enter);
+                            string title = Console.ReadLine();
+                            enter = Console.ReadLine();
+                            if (enter == "-")
                             {
-                                Console.WriteLine(error);
+                                manager.AddDiagnosis(id, title);
+                                Console.WriteLine("diagnosis was added");
                                 continue;
                             }
                             else
                             {
+                                int deathRate = int.Parse(enter);
+                                manager.AddDiagnosis(id, title, deathRate);
                                 Console.WriteLine("diagnosis was added");
                                 continue;
                             }
                         }
-                        else
+                        if (operation == "getById")
                         {
-                            if (!int.TryParse(enter, out deathRate))
-                            {
-                                Console.WriteLine("incorrect input");
-                                continue;
-                            }
-                            if (!manager.AddDiagnosis(ref error, id, title, deathRate))
-                            {
-                                Console.WriteLine(error);
-                                continue;
-                            }
-                            else
-                            {
-                                Console.WriteLine("diagnosis was added");
-                                continue;
-                            }
-                        }
-                    }
-                    if (operation == "getById")
-                    {
-                        Console.WriteLine("enter id of diagnosis");
-                        string enter = Console.ReadLine();
-                        int id = -1;
-                        if (!int.TryParse(enter, out id))
-                        {
-                            Console.WriteLine("incorrect input");
-                            continue;
-                        }
-                        Diagnosis diagnosis = new Diagnosis(0, "");
-                        if (manager.GetDiagnosisById(ref error, id, ref diagnosis))
-                        {
+                            Console.WriteLine("enter id of diagnosis");
+                            string enter = Console.ReadLine();
+                            int id = int.Parse(enter);
+                            Diagnosis diagnosis = new Diagnosis(0, "");
+
+                            manager.GetDiagnosisById(id, ref diagnosis);
                             Console.WriteLine(diagnosis.id + " " + diagnosis.title + " " + diagnosis.deathRate);
                             continue;
                         }
-                        else
+                        if (operation == "getByTherapyAreaId")
                         {
-                            Console.WriteLine(error);
-                            continue;
-                        }
-                    }
-                    if (operation == "getByTherapyAreaId")
-                    {
-                        //GetDiagnosesByTherapyAreaId(ref string error, int id, ref List < Diagnosis > outVal)
-                        Console.WriteLine("enter id of therapyArea");
-                        int id = -1;
-                        string enter = Console.ReadLine();
-                        if (!int.TryParse(enter, out id))
-                        {
-                            Console.WriteLine("incorrect input");
-                            continue;
-                        }
-                        List<Diagnosis> diagnoses = new List<Diagnosis>();
-                        if (manager.GetDiagnosesByTherapyAreaId(ref error, id, ref diagnoses))
-                        {
+                            Console.WriteLine("enter id of therapyArea");
+                            string enter = Console.ReadLine();
+                            int id = int.Parse(enter);
+                            List<Diagnosis> diagnoses = new List<Diagnosis>();
+
+                            manager.GetDiagnosesByTherapyAreaId(id, ref diagnoses);
                             for (int i = 0; i < diagnoses.Count; i++)
                             {
                                 Console.WriteLine(diagnoses[i].id + " " + diagnoses[i].title + " " + diagnoses[i].deathRate);
                             }
-                        }
-                        else
-                        {
-                            Console.WriteLine(error);
                             continue;
                         }
-                    }
-                    if (operation == "getByDeathRate")
-                    {
-                        //GetDiagnosesByDeathRate(ref string error, int deathRate, ref List<Diagnosis> outVal)
-                        Console.WriteLine("enter deathRate");
-                        int deathRate = 0;
-                        string enter = Console.ReadLine();
-                        if (!int.TryParse(enter, out deathRate))
+                        if (operation == "getByDeathRate")
                         {
-                            Console.WriteLine("incorrect input");
-                            continue;
-                        }
-                        List<Diagnosis> diagnoses = new List<Diagnosis>();
-                        if (manager.GetDiagnosesByDeathRate(ref error, deathRate, ref diagnoses))
-                        {
+                            Console.WriteLine("enter deathRate");
+                            string enter = Console.ReadLine();
+                            int deathRate = int.Parse(enter);
+                            List<Diagnosis> diagnoses = new List<Diagnosis>();
+
+                            manager.GetDiagnosesByDeathRate(deathRate, ref diagnoses);
                             for (int i = 0; i < diagnoses.Count; i++)
                             {
                                 Console.WriteLine(diagnoses[i].id + " " + diagnoses[i].title + " " + diagnoses[i].deathRate);
                             }
-                        }
-                        else
-                        {
-                            Console.WriteLine(error);
                             continue;
                         }
-                    }
-                    if (operation == "changeDeathRate")
-                    {
-                        Console.WriteLine("enter id of diagnosis and new deathRate");
-                        int id = -1;
-                        int deathRate = 0;
-                        string enter = Console.ReadLine();
-                        if (!int.TryParse(enter, out id))
+                        if (operation == "changeDeathRate")
                         {
-                            Console.WriteLine("incorrect input");
-                            continue;
-                        }
-                        enter = Console.ReadLine();
-                        if (!int.TryParse(enter, out deathRate))
-                        {
-                            Console.WriteLine("incorrect input");
-                            continue;
-                        }
-                        if (!manager.ChangeDeathRate(ref error, id, deathRate))
-                        {
-                            Console.WriteLine(error);
-                            continue;
-                        }
-                        else
-                        {
+                            Console.WriteLine("enter id of diagnosis and new deathRate");
+                            string enter = Console.ReadLine();
+                            int id = int.Parse(enter);
+                            enter = Console.ReadLine();
+                            int deathRate = int.Parse(enter);
+
+                            manager.ChangeDeathRate(id, deathRate);
                             Console.WriteLine("deathRate was changed");
                             continue;
                         }
-                    }
-                    if (operation == "delete")
-                    {
-                        Console.WriteLine("enter id of diagnosis");
-                        string enter = Console.ReadLine();
-                        int id = -1;
-                        if (!int.TryParse(enter, out id))
+                        if (operation == "delete")
                         {
-                            Console.WriteLine("incorrect input");
-                            continue;
-                        }
-                        if (manager.DeleteDiagnosis(ref error, id))
-                        {
+                            Console.WriteLine("enter id of diagnosis");
+                            string enter = Console.ReadLine();
+                            int id = int.Parse(enter);
+
+                            manager.DeleteDiagnosis(id);
                             Console.WriteLine("diagnosis was deleted");
                             continue;
                         }
-                        else
+                        if (operation == "goBack")
                         {
-                            Console.WriteLine(error);
-                            continue;
+                            return;
                         }
                     }
-                    if (operation == "goBack")
+                    catch (Exception exc)
                     {
-                        return;
+                        Console.WriteLine(exc.Message);
                     }
                     Console.WriteLine(operation + " is not an internal or external command, executable program, or batch file. Choose another operation");
                 }
