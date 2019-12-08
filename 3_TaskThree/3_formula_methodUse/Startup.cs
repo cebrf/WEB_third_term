@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace _1_hello
+namespace _3_formula_methodUse
 {
     public class Startup
     {
@@ -25,14 +25,29 @@ namespace _1_hello
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
+                int n = 23;
+                double res = 0;
+                double factorial = 1;
+                app.Use(async (context, next) => 
                 {
-                    await context.Response.WriteAsync("Hello World :]");
+                    //formula: sum (from i = 1 to i = n): i^(i+1) / (i! * e^i)
+                    for (int i = 1; i < n; i++)
+                    {
+                        factorial *= i;
+                        res += Math.Pow(i, i + 1) / (factorial * Math.Pow(Math.E, (double)i));
+                    }
+
+                    await next.Invoke();
+                    await context.Response.WriteAsync($"for n == 23\n");
+                });
+
+                app.Run(async (context) =>
+                {
+                    await context.Response.WriteAsync($"res = {res}    ");
                 });
             });
         }
