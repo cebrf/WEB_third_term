@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2_formula_methodUse", "3_fo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3_formula_usingMap", "3_formula_usingMap\3_formula_usingMap.csproj", "{A6D09C38-1FE7-4C7D-8F71-7F0D04FCC241}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4_formula_usingMiddleware", "4_formula_usingMiddleware\4_formula_usingMiddleware.csproj", "{2FF21EDF-F262-495A-8304-0DDFDFD38A81}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{A6D09C38-1FE7-4C7D-8F71-7F0D04FCC241}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6D09C38-1FE7-4C7D-8F71-7F0D04FCC241}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6D09C38-1FE7-4C7D-8F71-7F0D04FCC241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FF21EDF-F262-495A-8304-0DDFDFD38A81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FF21EDF-F262-495A-8304-0DDFDFD38A81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FF21EDF-F262-495A-8304-0DDFDFD38A81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FF21EDF-F262-495A-8304-0DDFDFD38A81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
