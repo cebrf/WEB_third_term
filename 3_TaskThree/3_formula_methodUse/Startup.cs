@@ -34,7 +34,7 @@ namespace _3_formula_methodUse
                 double factorial = 1;
                 app.Use(async (context, next) => 
                 {
-                    //formula: sum (from i = 1 to i = n): i^(i+1) / (i! * e^i)
+                    //formula: sum (from i = 1 to i = n) of i^(i+1) / (i! * e^i)
                     for (int i = 1; i < n; i++)
                     {
                         factorial *= i;
