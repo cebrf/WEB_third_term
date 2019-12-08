@@ -121,6 +121,7 @@ namespace _2_TaskTwo
                 {
                     { 0, new Therapist(0) },
                     { 1, new Specialist(1, 2) },
+                    { 10, new Specialist(10, 3) },
                     { 3, new Specialist(3, 4) },
                     { 5, new Therapist(5) },
                     { 14, new Specialist(14, 3) },
@@ -615,7 +616,7 @@ namespace _2_TaskTwo
             {
                 ManagerOfDoctors manager = new ManagerOfDoctors(ref rep);
                 Console.WriteLine("You are in Manager of doctors mode now");
-
+                Console.WriteLine("Oprations: nextDay, add, getById, getByTherapyAreaId, delete, goBack");
                 while (true)
                 {
                     Console.WriteLine("Choose operation");
@@ -714,6 +715,7 @@ namespace _2_TaskTwo
             {
                 managerOfDiagnosis manager = new managerOfDiagnosis(ref rep);
                 Console.WriteLine("You are in Manager of diagnosis mode now");
+                Console.WriteLine("Oprations: nextDay, add, getById, getByTherapyAreaId, getByDeathRate, delete, goBack");
 
                 while (true)
                 {
@@ -827,6 +829,7 @@ namespace _2_TaskTwo
             {
                 ManagerOfTherapyAreas manager = new ManagerOfTherapyAreas(ref rep);
                 Console.WriteLine("You are in Manager of therapyAreas mode now");
+                Console.WriteLine("Oprations: nextDay, add, getById, goBack");
 
                 while (true)
                 {
@@ -890,6 +893,7 @@ namespace _2_TaskTwo
             {
                 ManagerOfAppointments manager = new ManagerOfAppointments(ref rep);
                 Console.WriteLine("You are in Manager of appointments mode now");
+                Console.WriteLine("Oprations: nextDay, add, getAppointmentsForDay, getAppointmentsOfDoctor, getPatient, delete, changeDateTime, goBack");
 
                 while (true)
                 {
