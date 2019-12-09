@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "6_staicFiles", "6_staicFile
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7_IMessageSender", "7_IMessageSender\7_IMessageSender.csproj", "{BB9C00E4-092F-4F8C-BF77-EBA0F8DCBDBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8_mvcApp", "8_mvcApp\8_mvcApp.csproj", "{D4AB7ED8-AD40-4FFA-ADDE-8663E03B3F50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{BB9C00E4-092F-4F8C-BF77-EBA0F8DCBDBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB9C00E4-092F-4F8C-BF77-EBA0F8DCBDBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB9C00E4-092F-4F8C-BF77-EBA0F8DCBDBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4AB7ED8-AD40-4FFA-ADDE-8663E03B3F50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4AB7ED8-AD40-4FFA-ADDE-8663E03B3F50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4AB7ED8-AD40-4FFA-ADDE-8663E03B3F50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4AB7ED8-AD40-4FFA-ADDE-8663E03B3F50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
