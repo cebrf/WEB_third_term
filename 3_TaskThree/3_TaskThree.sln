@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "4_formula_usingMiddleware",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "5_threeMiddleware", "5_threeMiddleware\5_threeMiddleware.csproj", "{EC1291FA-4636-4567-99FD-05AAC111AFAC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "6_staicFiles", "6_staicFiles\6_staicFiles.csproj", "{ED8304B9-B67F-4DB8-B933-44BE5E17DB5E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{EC1291FA-4636-4567-99FD-05AAC111AFAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC1291FA-4636-4567-99FD-05AAC111AFAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC1291FA-4636-4567-99FD-05AAC111AFAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED8304B9-B67F-4DB8-B933-44BE5E17DB5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED8304B9-B67F-4DB8-B933-44BE5E17DB5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED8304B9-B67F-4DB8-B933-44BE5E17DB5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED8304B9-B67F-4DB8-B933-44BE5E17DB5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
