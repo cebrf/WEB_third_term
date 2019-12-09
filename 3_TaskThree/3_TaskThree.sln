@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "0_sample", "0_sample\0_sample.csproj", "{820AD357-FCB7-40A7-A6B9-31271FDB2D21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "0_sample", "0_sample\0_sample.csproj", "{820AD357-FCB7-40A7-A6B9-31271FDB2D21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "1_hello", "1_hello\1_hello.csproj", "{28EA6321-BA40-4E25-8465-DE54A5082EFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "1_hello", "1_hello\1_hello.csproj", "{28EA6321-BA40-4E25-8465-DE54A5082EFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2_formula_methodUse", "3_formula_methodUse\2_formula_methodUse.csproj", "{CBB05679-2EC4-4355-895A-39BF5A7B34F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3_formula_usingMap", "3_formula_usingMap\3_formula_usingMap.csproj", "{A6D09C38-1FE7-4C7D-8F71-7F0D04FCC241}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "3_formula_usingMap", "3_formula_usingMap\3_formula_usingMap.csproj", "{A6D09C38-1FE7-4C7D-8F71-7F0D04FCC241}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4_formula_usingMiddleware", "4_formula_usingMiddleware\4_formula_usingMiddleware.csproj", "{2FF21EDF-F262-495A-8304-0DDFDFD38A81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "4_formula_usingMiddleware", "4_formula_usingMiddleware\4_formula_usingMiddleware.csproj", "{2FF21EDF-F262-495A-8304-0DDFDFD38A81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "5_threeMiddleware", "5_threeMiddleware\5_threeMiddleware.csproj", "{EC1291FA-4636-4567-99FD-05AAC111AFAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{2FF21EDF-F262-495A-8304-0DDFDFD38A81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FF21EDF-F262-495A-8304-0DDFDFD38A81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FF21EDF-F262-495A-8304-0DDFDFD38A81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC1291FA-4636-4567-99FD-05AAC111AFAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC1291FA-4636-4567-99FD-05AAC111AFAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC1291FA-4636-4567-99FD-05AAC111AFAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC1291FA-4636-4567-99FD-05AAC111AFAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
