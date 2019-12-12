@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Doctors";
+}
+
+<div>
+    <h3>Diagn</h3>
+    <table>
+        <tr>
+            <td>id  </td>
+            <td>title  </td>
+            <td>deathRate  </td>
+            <td></td>
+        </tr>
+        @foreach (var doc in Model)
+        {
+            <tr>
+                <td>@doc.Id</td>
+                <td>      </td>
+                <td><a href="~/Home/ShowDetails/@doc.Id">Show details</a></td>
+                <td><a href="~/Home/Edit/@doc.Id">Edit</a></td>
+                <td><a href="~/Home/Delete/@doc.Id">Delete</a></td>
+            </tr>
+        }
+    </table>
+</div>
