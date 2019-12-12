@@ -62,5 +62,22 @@ namespace Hospital.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            if (db.Doctors.Find(id) == null)
+            {
+                //NotFound
+            }
+            return View(db.Doctors.Find(id));
+        }
+        [HttpPost]
+        public IActionResult Delete(Doctors doctor)
+        {
+            db.Doctors.Remove(doctor);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }
