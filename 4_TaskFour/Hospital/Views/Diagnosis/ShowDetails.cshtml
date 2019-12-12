@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Diagnoses";
+}
+
+    <div>
+        <h3>Diagn</h3>
+        <table>
+            <tr>
+                <td>id  </td>
+                <td>title  </td>
+                <td>deathRate  </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>@Model.Id</td>
+                <td>      </td>
+                <td>@Model.Title</td>
+                <td>@Model.DeathRate</td>
+                <td><a href="~/Diagnoses">Go back</a></td>
+            </tr>
+        </table>
+    </div>

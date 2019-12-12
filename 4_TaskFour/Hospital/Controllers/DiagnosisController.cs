@@ -18,5 +18,9 @@ namespace Hospital.Controllers
         {
             return View(db.Diagnoses.ToList());
         }
+        public IActionResult ShowDetails(int id)
+        {
+            return View(db.Diagnoses.Find(id));
+        }
     }
 }

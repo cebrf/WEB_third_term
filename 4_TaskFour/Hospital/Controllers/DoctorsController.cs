@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Hospital.Models;
+//using System.Net;
 
 namespace Hospital.Controllers
 {
@@ -16,6 +18,49 @@ namespace Hospital.Controllers
         public IActionResult Index()
         {
             return View(db.Doctors.ToList());
+        }
+
+        public IActionResult ShowDetails(int id)
+        {
+            if (db.Doctors.Find(id) == null)
+            {
+                //NotFound
+            }
+            return View(db.Doctors.Find(id));
+        }
+
+        [HttpGet]
+        public IActionResult Add()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Add(Doctors doctor)
+        {
+            if (db.Doctors.Find(doctor.Id) == null)
+            {
+                //BadRequest
+            }
+            db.Doctors.Add(doctor);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            if (db.Doctors.Find(id) == null)
+            {
+                //NotFound
+            }
+            return View(db.Doctors.Find(id));
+        }
+        [HttpPost]
+        public IActionResult Edit(Doctors doctor)
+        {
+            db.Doctors.Update(doctor);
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }

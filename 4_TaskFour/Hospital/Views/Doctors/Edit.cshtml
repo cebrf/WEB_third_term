@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Edit doctor";
+}
+<h2>Форма оформления покупки</h2>
+
+<form method="post" class="form-horizontal" role="form">
+    <div class="form-group">
+        <label for="User" class="col-md-2 control-label">Name:</label>
+        <div class="col-md-4">
+            <input value="@Model.Id" name="Id" disabled/>
+        </div>
+    </div>
+    <p>вы можете изменить следующие поля:</p>
+    <div class="form-group">
+        <label for="User" class="col-md-2 control-label">Name:</label>
+        <div class="col-md-4">
+            <input type="text" name="Name" class="form-control" value="@Model.Name" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label">Speciality:</label>
+        <div class="col-md-4">
+            <input type="text" name="Speciality" class="form-control" value="@Model.Speciality" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label">Skill:</label>
+        <div class="col-md-4">
+            <input type="text" name="Skill" class="form-control" value="@Model.Skill" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Отправить" />
+        </div>
+    </div>
+</form>

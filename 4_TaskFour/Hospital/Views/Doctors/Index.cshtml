@@ -3,12 +3,13 @@
 }
 
 <div>
-    <h3>Diagn</h3>
+    <h3>Doc</h3>
     <table>
         <tr>
             <td>id  </td>
-            <td>title  </td>
-            <td>deathRate  </td>
+            <td>name  </td>
+            <td>speciality  </td>
+            <td>skill</td>
             <td></td>
         </tr>
         @foreach (var doc in Model)
@@ -16,10 +17,13 @@
             <tr>
                 <td>@doc.Id</td>
                 <td>      </td>
-                <td><a href="~/Home/ShowDetails/@doc.Id">Show details</a></td>
-                <td><a href="~/Home/Edit/@doc.Id">Edit</a></td>
-                <td><a href="~/Home/Delete/@doc.Id">Delete</a></td>
+                <td><a href="~/Doctors/ShowDetails/@doc.Id">Show details</a></td>
+                <td><a href="~/Doctors/Edit/@doc.Id">Edit</a></td>
+                <td><a href="~/Doctors/Delete/@doc.Id">Delete</a></td>
             </tr>
         }
+        <tr>
+            <td><a href="~/Doctors/Add/">Add new</a></td>
+        </tr>
     </table>
 </div>
