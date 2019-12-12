@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Hospital.Models;
-//using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace Hospital.Controllers
 {
@@ -35,11 +35,12 @@ namespace Hospital.Controllers
             return View();
         }
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Add(Doctors doctor)
         {
-            if (db.Doctors.Find(doctor.Id) == null)
+            if (doctor.Id == 0 || doctor.Name == "" || doctor.Skill == 0 || db.Doctors.Find(doctor.Id) == null)
             {
-                //BadRequest
+                return BadRequest();
             }
             db.Doctors.Add(doctor);
             db.SaveChanges();
@@ -47,28 +48,34 @@ namespace Hospital.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Edit(int id)
         {
-            if (db.Doctors.Find(id) == null)
+            if (id == 0 || db.Doctors.Find(id) == null)
             {
-                //NotFound
+                return NotFound();
             }
             return View(db.Doctors.Find(id));
         }
         [HttpPost]
         public IActionResult Edit(Doctors doctor)
         {
+            if (doctor.Name == "" || doctor.Skill == 0)
+            {
+                return BadRequest();
+            }
             db.Doctors.Update(doctor);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Delete(int id)
         {
-            if (db.Doctors.Find(id) == null)
+            if (id == 0 || db.Doctors.Find(id) == null)
             {
-                //NotFound
+                return NotFound();
             }
             return View(db.Doctors.Find(id));
         }
