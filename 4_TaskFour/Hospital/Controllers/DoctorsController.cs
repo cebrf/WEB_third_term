@@ -23,27 +23,27 @@ namespace Hospital.Controllers
             }           
             else
             {
-                List<Doctors> founed = new List<Doctors>();
+                List<Doctors> found = new List<Doctors>();
                 foreach (var doc in db.Doctors)
                 {
                     if (doc.Id.ToString().Contains(textToFind))
                     {
-                        founed.Add(doc);
+                        found.Add(doc);
                     }
                     else if (doc.Name.Contains(textToFind))
                     {
-                        founed.Add(doc);
+                        found.Add(doc);
                     }
                     else if (doc.Speciality.Contains(textToFind))
                     {
-                        founed.Add(doc);
+                        found.Add(doc);
                     }
                     else if (doc.Skill.ToString().Contains(textToFind))
                     {
-                        founed.Add(doc);
+                        found.Add(doc);
                     }
                 }
-                return View(founed);
+                return View(found);
             }
         }
 
@@ -66,7 +66,7 @@ namespace Hospital.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Add(Doctors doctor)
         {
-            if (doctor.Id == 0 || doctor.Name == "" || doctor.Skill == 0 || db.Doctors.Find(doctor.Id) == null)
+            if (doctor.Id == 0 || doctor.Name == "" || db.Doctors.Find(doctor.Id) != null)
             {
                 return BadRequest();
             }

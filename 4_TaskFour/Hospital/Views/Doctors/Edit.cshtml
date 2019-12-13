@@ -1,16 +1,16 @@
 ﻿@{
     ViewData["Title"] = "Edit doctor";
 }
-<h2>Форма оформления покупки</h2>
+<h2>Form of editing doctor</h2>
 
 <form method="post" class="form-horizontal" role="form">
     <div class="form-group">
-        <label for="User" class="col-md-2 control-label">Name:</label>
+        <label for="User" class="col-md-2 control-label">Id:</label>
         <div class="col-md-4">
             <input value="@Model.Id" name="Id" disabled/>
         </div>
     </div>
-    <p>вы можете изменить следующие поля:</p>
+    <p>you can change the following fields:</p>
     <div class="form-group">
         <label for="User" class="col-md-2 control-label">Name:</label>
         <div class="col-md-4">
@@ -30,13 +30,17 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Отправить" />
-        </div>
-        <div class="col-md-offset-2 col-md-10">
-            <button type="button" class="btn btn-outline-success and-all-other-classes">
-                <a href="~/Doctors" style="color:inherit"> Back </a>
-            </button>
+        <div class="container">
+            <div class="row">
+                <div class="col-offset-2 col-3">
+                    <input type="submit" class="btn btn-success" value="Confirm" />
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-danger">
+                        <a href="~/Doctors" style="color:inherit">Cancel</a>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </form>

@@ -1,10 +1,10 @@
 ﻿@{
     ViewData["Title"] = "Add doctor";
 }
-<h2>Форма оформления покупки</h2>
+<h2>Form of adding doctor</h2>
 
 <form method="post" class="form-horizontal" role="form">
-    <p>заполните следующие поля:</p>
+    <p>fill in the following fields:</p>
     <div class="form-group">
         <label class="col-md-2 control-label">Id:</label>
         <div class="col-md-4">
@@ -30,8 +30,17 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Отправить" />
+        <div class="container">
+            <div class="row">
+                <div class="col-offset-2 col-3">
+                    <input type="submit" class="btn btn-success" value="Confirm" />
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-danger">
+                        <a href="~/Doctors" style="color:inherit">Cancel</a>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </form>
