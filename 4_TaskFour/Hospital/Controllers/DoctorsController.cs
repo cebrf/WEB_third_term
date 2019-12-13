@@ -15,16 +15,44 @@ namespace Hospital.Controllers
         {
             this.db = context;
         }
-        public IActionResult Index()
+        public IActionResult Index(string textToFind = null)
         {
-            return View(db.Doctors.ToList());
+            if (textToFind == null)
+            {
+                return View(db.Doctors.ToList());
+            }           
+            else
+            {
+                List<Doctors> founed = new List<Doctors>();
+                foreach (var doc in db.Doctors)
+                {
+                    if (doc.Id.ToString().Contains(textToFind))
+                    {
+                        founed.Add(doc);
+                    }
+                    else if (doc.Name.Contains(textToFind))
+                    {
+                        founed.Add(doc);
+                    }
+                    else if (doc.Speciality.Contains(textToFind))
+                    {
+                        founed.Add(doc);
+                    }
+                    else if (doc.Skill.ToString().Contains(textToFind))
+                    {
+                        founed.Add(doc);
+                    }
+                }
+                return View(founed);
+            }
         }
 
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult ShowDetails(int id)
         {
-            if (db.Doctors.Find(id) == null)
+            if (id == 0 || db.Doctors.Find(id) == null)
             {
-                //NotFound
+                return NotFound();
             }
             return View(db.Doctors.Find(id));
         }
@@ -60,7 +88,7 @@ namespace Hospital.Controllers
         [HttpPost]
         public IActionResult Edit(Doctors doctor)
         {
-            if (doctor.Name == "" || doctor.Skill == 0)
+            if (doctor.Name == "" || doctor.Speciality == "")
             {
                 return BadRequest();
             }
