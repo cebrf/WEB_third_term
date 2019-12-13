@@ -1,22 +1,30 @@
 ﻿@{
-    ViewData["Title"] = "Diagnoses";
+    ViewData["Title"] = "Show details";
 }
+<h2>Form of details of diagnoses</h2>
 
-    <div>
-        <h3>Diagn</h3>
-        <table>
-            <tr>
-                <td>id  </td>
-                <td>title  </td>
-                <td>deathRate  </td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>@Model.Id</td>
-                <td>      </td>
-                <td>@Model.Title</td>
-                <td>@Model.DeathRate</td>
-                <td><a href="~/Diagnoses">Go back</a></td>
-            </tr>
-        </table>
+<form method="post" class="form-horizontal" role="form">
+    <div class="form-group">
+        <label for="User" class="col-md-2 control-label">Id:</label>
+        <div class="col-md-4">
+            <input value="@Model.Id" name="Id" disabled />
+        </div>
     </div>
+    <div class="form-group">
+        <label for="User" class="col-md-2 control-label">Title:</label>
+        <div class="col-md-4">
+            <input type="text" name="Title" value="@Model.Title" disabled />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label">DeathRate:</label>
+        <div class="col-md-4">
+            <input type="text" name="DeathRate" value="@Model.DeathRate" disabled />
+        </div>
+    </div>
+    <div>
+        <button type="button" class="btn btn-danger">
+            <a href="~/Diagnosis" style="color:inherit">Go back</a>
+        </button>
+    </div>
+</form>
