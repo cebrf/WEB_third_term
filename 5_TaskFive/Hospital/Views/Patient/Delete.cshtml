@@ -7,37 +7,25 @@
 @model PatientVM
 
 <h2>Form of discharging from hospital </h2>
-<form method="post" class="form-horizontal" role="form">
-    <div class="form-group">
-        <label for="User" class="col-md-2 control-label">Name:</label>
+<form asp-controller="Patient" asp-action="Delete" asp-antiforgery="true">
+    <div>
         <div>
-            <input type="text" name="Name" value="@Model.Name" disabled />
+            <label asp-for="Name"></label>
+            <input type="text" asp-for="Name" value="@Model.Name" disabled />
+        </div>
+        <div>
+            <label asp-for="Diagnosis"></label>
+            <input type="text" asp-for="Diagnosis" value="@Model.Diagnosis" disabled />
+        </div>
+        <div>
+            <label asp-for="Lifetime"></label>
+            <input type="text" asp-for="Lifetime" value="@Model.Lifetime.Days days  @Model.Lifetime.Hours hours  @Model.Lifetime.Minutes min" disabled />
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label">Diagnosis:</label>
-        <div>
-            <input type="text" name="Diagnosis" value="@Model.Diagnosis" disabled />
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label">Lifetime:</label>
-        <div>
-            <input type="text" name="Lifetime" value="@Model.Lifetime.Days days  @Model.Lifetime.Hours hours  @Model.Lifetime.Minutes min" disabled />
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="container">
-            <div class="row">
-                <div class="col-offset-2 col-3">
-                    <input type="submit" class="btn btn-success" value="Confirm" />
-                </div>
-                <div class="col">
-                    <button type="button" class="btn btn-danger">
-                        <a asp-controller="Patient" asp-action="Index" style="color:inherit">Cancel</a>
-                    </button>
-                </div>
-            </div>
-        </div>
+    <div>
+        <input type="submit" class="btn btn-success" value="Confirm" />
+        <button type="button" class="btn btn-danger">
+            <a asp-controller="Patient" asp-action="Index" style="color:inherit">Cancel</a>
+        </button>
     </div>
 </form>
