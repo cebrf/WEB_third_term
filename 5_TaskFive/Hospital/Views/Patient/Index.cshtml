@@ -4,40 +4,45 @@
 
 @using Hospital.ViewModels
 @using Hospital.Models
-@model SelectVM
-
+@model IndexViewModel
 Diagnosis
 <form class="form-inline">
-    <label>Выберите компанию:</label>
-    <select name="DiagnosisId" class="form-control">
-        @foreach (DiagnosisVM d in Model.Diagnoses)
-        {
-            <option value="@d.Id">@d.Title</option>
-        }
-    </select>
+    <label>Choose diagnosis:</label>
+    <select name="DiagnosisId" asp-items="Model.FilterViewModel.diagnoses" class="form-control"></select>
     <input type="submit" />
 </form>
 <br />
 <table class="table">
     <tr>
-        <td>Name</td>
-        <td>Diagnosis</td>
-        <td>Lifetime</td>
-        <td></td><td></td><td></td>
+        <th>
+            <a asp-action="Index"
+               asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
+               asp-route-company="@(Model.FilterViewModel.SelectedDiagnosis)">Name</a>
+        </th>
+        <th>
+            <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.DiagnSort)"
+               asp-route-company="@(Model.FilterViewModel.SelectedDiagnosis)">Diagnosis</a>
+        </th>
+        <th>
+            <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.DateSort)"
+               asp-route-company="@(Model.FilterViewModel.SelectedDiagnosis)">Lifetime</a>
+        </th>
     </tr>
     @foreach (PatientVM p in Model.Patients)
     {
         <tr>
             <td>@p.Name</td>
             <td>@p.Diagnosis</td>
-            <td>@p.Lifetime.Days days
+            <td>
+                @p.Lifetime.Days days
                 @p.Lifetime.Hours hours
-                @p.Lifetime.Minutes min</td>
+                @p.Lifetime.Minutes min
+            </td>
             <td><a href="~/Patient/Delete/@p.Id">Discharge from hospital</a></td>
         </tr>
     }
 </table>
-
+<br />
 <div class="container">
     <div class="row mt-2">
         <div class="col-3">
@@ -47,3 +52,26 @@ Diagnosis
         </div>
     </div>
 </div>
+<br />
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       asp-route-company="@(Model.FilterViewModel.SelectedDiagnosis)"
+       asp-route-sortorder="@(Model.SortViewModel.Current)"
+       class="btn  btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       asp-route-company="@(Model.FilterViewModel.SelectedDiagnosis)"
+       asp-route-sortorder="@(Model.SortViewModel.Current)"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}

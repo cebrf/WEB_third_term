@@ -17,24 +17,57 @@ namespace Hospital.Controllers
         {
             this.db = context;
         }
-        public IActionResult Index(int DiagnosisId = 0)
+        public IActionResult Index(int? DiagnosisId, int Page = 1, SortState SortOrder = SortState.NameAsc)
         {
+            int pageSize = 3;
+
             List<DiagnosisVM> diagnosesVM = db.Diagnoses
                 .Select(d => new DiagnosisVM { Id = d.Id, Title = d.Title })
                 .ToList();
-            diagnosesVM.Insert(0, new DiagnosisVM { Id = 0, Title = "All" });
 
             List<PatientVM> patientsVM = new List<PatientVM>();
             foreach (var patient in db.Patients.ToList())
             {
                 var e = db.Diagnoses.ToList();
                 Diagnosis diagnosis = db.Diagnoses.ToList().Where(di => di.Id == patient.DiagnosisId).FirstOrDefault();
-                if (DiagnosisId == 0 || diagnosis.Id == DiagnosisId)
+                if (DiagnosisId == null || DiagnosisId == 0 || diagnosis.Id == DiagnosisId)
                     patientsVM.Add(new PatientVM(patient.ArrivalDate) { Id = patient.Id, Name = patient.Name, Diagnosis = diagnosis.Title });
             }
 
-            SelectVM selectVM = new SelectVM { Diagnoses = diagnosesVM, Patients = patientsVM };
-            return View(selectVM);
+
+            switch (SortOrder)
+            {
+                case SortState.NameDesc:
+                    patientsVM = patientsVM.OrderByDescending(s => s.Name).ToList();
+                    break;
+                case SortState.DiagnAsc:
+                    patientsVM = patientsVM.OrderBy(s => s.Diagnosis).ToList();
+                    break;
+                case SortState.DiagnDesc:
+                    patientsVM = patientsVM.OrderByDescending(s => s.Diagnosis).ToList();
+                    break;
+                case SortState.DateAsc:
+                    patientsVM = patientsVM.OrderBy(s => s.Lifetime).ToList();
+                    break;
+                case SortState.DateDesc:
+                    patientsVM = patientsVM.OrderByDescending(s => s.Lifetime).ToList();
+                    break;
+                default:
+                    patientsVM = patientsVM.OrderBy(s => s.Name).ToList();
+                    break;
+            }
+
+            var count = patientsVM.Count();
+            var items = patientsVM.Skip((Page - 1) * pageSize).Take(pageSize).ToList();
+
+            IndexViewModel viewModel = new IndexViewModel
+            {
+                PageViewModel = new PageViewModel(count, Page, pageSize),
+                SortViewModel = new SortViewModel(SortOrder),
+                FilterViewModel = new FilterViewModel(diagnosesVM, DiagnosisId),
+                Patients = items
+            };
+            return View(viewModel);
         }
 
         [HttpGet]
