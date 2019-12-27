@@ -4,10 +4,20 @@
 
 @using Hospital.ViewModels
 @using Hospital.Models
-@model List<PatientVM>
-@{
-    ViewData["Title"] = "Home Page";
-}
+@model SelectVM
+
+Diagnosis
+<form class="form-inline">
+    <label>Выберите компанию:</label>
+    <select name="DiagnosisId" class="form-control">
+        @foreach (DiagnosisVM d in Model.Diagnoses)
+        {
+            <option value="@d.Id">@d.Title</option>
+        }
+    </select>
+    <input type="submit" />
+</form>
+<br />
 <table class="table">
     <tr>
         <td>Name</td>
@@ -15,7 +25,7 @@
         <td>Lifetime</td>
         <td></td><td></td><td></td>
     </tr>
-    @foreach (PatientVM p in Model)
+    @foreach (PatientVM p in Model.Patients)
     {
         <tr>
             <td>@p.Name</td>
