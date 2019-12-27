@@ -17,20 +17,20 @@ namespace Hospital
                     {
                         Name = "Mark",
                         DiagnosisId = 5,
-                        ArrivalDate = 5
-                    },
+                        ArrivalDate = new System.DateTime(1996, 6, 3, 22, 15, 0)
+            },
                     new Patient
                     {
                         Name = "Tom",
                         DiagnosisId = 3,
-                        ArrivalDate = 12
-                    },
+                        ArrivalDate = new DateTime(1996, 12, 6, 13, 2, 0)
+            },
                     new Patient
                     {
                         Name = "Andrew",
                         DiagnosisId = 4,
-                        ArrivalDate = 13
-                    }
+                        ArrivalDate = new DateTime(1996, 6, 3, 22, 15, 0)
+            }
                 );
                 context.SaveChanges();
             }

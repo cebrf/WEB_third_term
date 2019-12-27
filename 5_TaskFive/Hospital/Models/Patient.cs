@@ -10,6 +10,6 @@ namespace Hospital.Models
         public int Id { get; set; }
         public int DiagnosisId { get; set; }
         public string Name { get; set; }
-        public int ArrivalDate { get; set; }
+        public DateTime ArrivalDate { get; set; }
     }
 }

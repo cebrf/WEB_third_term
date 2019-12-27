@@ -23,7 +23,7 @@ namespace Hospital.Controllers
             {
                 var e = db.Diagnoses.ToList();
                 Diagnosis diagnosis = db.Diagnoses.ToList().Where(di => di.Id == patient.DiagnosisId).FirstOrDefault();
-                patientsVM.Add(new PatientVM { Id = patient.Id, Name = patient.Name, Diagnosis = diagnosis.Title });
+                patientsVM.Add(new PatientVM { Id = patient.Id, Name = patient.Name, Diagnosis = diagnosis.Title, ArrivalDate = patient.ArrivalDate });
             }
             return View(patientsVM);
         }

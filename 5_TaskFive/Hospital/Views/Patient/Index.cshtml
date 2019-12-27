@@ -12,6 +12,7 @@
     <tr>
         <td>Name</td>
         <td>Diagnosis</td>
+        <td>Lifetime</td>
         <td></td><td></td><td></td>
     </tr>
     @foreach (PatientVM p in Model)
@@ -19,6 +20,7 @@
         <tr>
             <td>@p.Name</td>
             <td>@p.Diagnosis</td>
+            <td>@p.Lifetime.Days days</td>
             <td><a href="~/Patient/ShowDetails/@p.Id">Show details</a></td>
             <td><a href="~/Patient/Edit/@p.Id">Edit</a></td>
             <td><a href="~/Patient/Delete/@p.Id">Delete</a></td>
