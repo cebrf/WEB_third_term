@@ -9,12 +9,15 @@ namespace Hospital.ViewModels
     {
         public PatientVM()
         {
+            Lifetime = DateTime.Now.Subtract(DateTime.Now);
+        }
+        public PatientVM(DateTime ArrivalDate)
+        {
             Lifetime = DateTime.Now.Subtract(ArrivalDate);
         }
         public int Id { get; set; }
         public string Name { get; set; }
         public string Diagnosis { get; set; }
-        public DateTime ArrivalDate { get; set; }
         public TimeSpan Lifetime { get; }
     }
 }

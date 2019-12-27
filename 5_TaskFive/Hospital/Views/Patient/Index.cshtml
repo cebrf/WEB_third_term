@@ -20,10 +20,10 @@
         <tr>
             <td>@p.Name</td>
             <td>@p.Diagnosis</td>
-            <td>@p.Lifetime.Days days</td>
-            <td><a href="~/Patient/ShowDetails/@p.Id">Show details</a></td>
-            <td><a href="~/Patient/Edit/@p.Id">Edit</a></td>
-            <td><a href="~/Patient/Delete/@p.Id">Delete</a></td>
+            <td>@p.Lifetime.Days days
+                @p.Lifetime.Hours hours
+                @p.Lifetime.Minutes min</td>
+            <td><a href="~/Patient/Delete/@p.Id">Discharge from hospital</a></td>
         </tr>
     }
 </table>

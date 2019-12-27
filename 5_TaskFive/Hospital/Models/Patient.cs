@@ -7,6 +7,10 @@ namespace Hospital.Models
 {
     public class Patient
     {
+        public Patient()
+        {
+            ArrivalDate = DateTime.Now;
+        }
         public int Id { get; set; }
         public int DiagnosisId { get; set; }
         public string Name { get; set; }

@@ -23,19 +23,9 @@ namespace Hospital.Controllers
             {
                 var e = db.Diagnoses.ToList();
                 Diagnosis diagnosis = db.Diagnoses.ToList().Where(di => di.Id == patient.DiagnosisId).FirstOrDefault();
-                patientsVM.Add(new PatientVM { Id = patient.Id, Name = patient.Name, Diagnosis = diagnosis.Title, ArrivalDate = patient.ArrivalDate });
+                patientsVM.Add(new PatientVM(patient.ArrivalDate) { Id = patient.Id, Name = patient.Name, Diagnosis = diagnosis.Title });
             }
             return View(patientsVM);
-        }
-
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult ShowDetails(int id)
-        {
-            if (id == 0 || db.Patients.Find(id) == null)
-            {
-                return NotFound();
-            }
-            return View(db.Patients.Find(id));
         }
 
         [HttpGet]
@@ -45,35 +35,14 @@ namespace Hospital.Controllers
         }
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Add(Patient doctor)
+        public IActionResult Add(AddPatientVM pat)
         {
-            if (doctor.Id == 0 || doctor.Name == "" || db.Patients.Find(doctor.Id) != null)
+            Diagnosis diagnosis = db.Diagnoses.ToList().Where(di => di.Title == pat.Diagnosis).FirstOrDefault();
+            if (pat.Name == null || diagnosis == null)
             {
                 return BadRequest();
             }
-            db.Patients.Add(doctor);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Edit(int id)
-        {
-            if (id == 0 || db.Patients.Find(id) == null)
-            {
-                return NotFound();
-            }
-            return View(db.Patients.Find(id));
-        }
-        [HttpPost]
-        public IActionResult Edit(Patient doctor)
-        {
-            if (doctor.Name == "")
-            {
-                return BadRequest();
-            }
-            db.Patients.Update(doctor);
+            db.Patients.Add(new Patient { Name = pat.Name, DiagnosisId = diagnosis.Id });
             db.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -86,12 +55,14 @@ namespace Hospital.Controllers
             {
                 return NotFound();
             }
-            return View(db.Patients.Find(id));
+            Patient p = db.Patients.Find(id);
+            Diagnosis d = db.Diagnoses.ToList().Where(di => di.Id == p.DiagnosisId).FirstOrDefault();
+            return View(new PatientVM(p.ArrivalDate) { Id = p.Id, Name = p.Name, Diagnosis = d.Title });
         }
         [HttpPost]
-        public IActionResult Delete(Patient doctor)
+        public IActionResult Delete(PatientVM p)
         {
-            db.Patients.Remove(doctor);
+            db.Patients.Remove(db.Patients.Find(p.Id));
             db.SaveChanges();
             return RedirectToAction("Index");
         }
