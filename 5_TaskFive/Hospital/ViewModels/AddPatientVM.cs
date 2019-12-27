@@ -8,6 +8,6 @@ namespace Hospital.ViewModels
     public class AddPatientVM
     {
         public string Name { get; set; }
-        public string Diagnosis { get; set; }
+        public int DiagnosisId { get; set; }
     }
 }

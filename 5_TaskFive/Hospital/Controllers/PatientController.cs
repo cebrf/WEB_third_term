@@ -39,18 +39,17 @@ namespace Hospital.Controllers
         [HttpGet]
         public IActionResult Add()
         {
-            return View();
+            return View(db.Diagnoses.ToList());
         }
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Add(AddPatientVM pat)
         {
-            Diagnosis diagnosis = db.Diagnoses.ToList().Where(di => di.Title == pat.Diagnosis).FirstOrDefault();
-            if (pat.Name == null || diagnosis == null)
+            if (pat.Name == null)
             {
                 return BadRequest();
             }
-            db.Patients.Add(new Patient { Name = pat.Name, DiagnosisId = diagnosis.Id });
+            db.Patients.Add(new Patient { Name = pat.Name, DiagnosisId = pat.DiagnosisId });
             db.SaveChanges();
             return RedirectToAction("Index");
         }
