@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Diagnoses";
+}
+
+<div style="margin-bottom: 10%">
+    <h3>Diagnoses</h3>
+    <div class="container">
+        @foreach (var dia in Model)
+        {
+            <div class="row">
+                <div class="col-offset-1 col">
+                    <input type="text" value="@dia.Title" disabled />
+                </div>
+                <div class="col">
+                    <a href="~/Diagnosis/ShowDetails/@dia.Id">Show details</a>
+                </div>
+                <div class="col">
+                    <a href="~/Diagnosis/Edit/@dia.Id">Edit</a>
+                </div>
+                <div class="col">
+                    <a href="~/Diagnosis/Delete/@dia.Id">Delete</a>
+                </div>
+            </div>
+        }
+        <div class="row mt-2">
+            <div class="col-3">
+                <button type="button" class="btn btn-primary">
+                    <a href="~/Diagnosis/Add/" style="color: inherit">Add new</a>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<form method="get" class="form-horizontal" role="form">
+    <div class="form-group">
+        <div class="container">
+            <div class="row">
+                <label class="col control-label">Search by word (part of word)</label>
+            </div>
+            <div class="input-group mb-3">
+                <input type="text" name="textToFind" class="form-control" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <input type="submit" class="input-group-text" id="basic-addon2" value="Find" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

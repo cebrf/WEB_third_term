@@ -9,7 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Task_1
+using Hospital.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace Hospital
 {
     public class Startup
     {
@@ -23,7 +26,10 @@ namespace Task_1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            //services.AddControllersWithViews();
+            services.AddDbContext<HospitalContext>(options =>
+            options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Edit diagnosis";
+}
+<h2>Form of editing diagnosis</h2>
+
+<form method="post" class="form-horizontal" role="form">
+    <div class="form-group">
+        <label for="User" class="col-md-2 control-label">Id:</label>
+        <div class="col-md-4">
+            <input value="@Model.Id" name="Id" disabled/>
+        </div>
+    </div>
+    <p>you can change the following fields:</p>
+    <div class="form-group">
+        <label for="User" class="col-md-2 control-label">Title:</label>
+        <div class="col-md-4">
+            <input type="text" name="Title" class="form-control" value="@Model.Title" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label">DeathRate:</label>
+        <div class="col-md-4">
+            <input type="text" name="DeathRate" class="form-control" value="@Model.DeathRate" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="container">
+            <div class="row">
+                <div class="col-offset-2 col-3">
+                    <input type="submit" class="btn btn-success" value="Confirm" />
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-danger">
+                        <a href="~/Diagnosis" style="color:inherit">Cancel</a>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
