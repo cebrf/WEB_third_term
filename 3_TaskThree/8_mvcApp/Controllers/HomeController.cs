@@ -11,20 +11,20 @@ namespace _8_mvcApp.Controllers
 {
     public class HomeController : Controller
     {
-        MobileContext db; //контекст данных
+        MobileContext db;
         public HomeController(MobileContext context)
         {
             db = context;
         }
         public IActionResult Index()
         {
-            return View(db.Phones.ToList());  //генерирует представление
+            return View(db.Phones.ToList());
         }
 
         [HttpGet]
         public IActionResult Buy(int? id)
         {
-            if (id == null) return RedirectToAction("Index"); //переадресация на метод Index
+            if (id == null) return RedirectToAction("Index");
             ViewBag.PhoneId = id;
             return View();
         }

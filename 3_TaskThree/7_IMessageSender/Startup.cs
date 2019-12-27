@@ -23,9 +23,9 @@ namespace _7_IMessageSender
             {
                 Random random = new Random();
                 int rund = random.Next();
-                if (rund % 2 == 0)
+                /*if (rund % 2 == 0)
                     return new EmailMessageSender();
-                else 
+                else*/ 
                     return new SmsMessageSender();
             });
             services.AddTransient<MessageService>();

@@ -15,19 +15,35 @@ namespace Hospital
                 context.Diagnoses.AddRange(
                     new Diagnosis
                     {
-                        Title = "d1",
-                        DeathRate = 74
+                        Title = "pneumonia",
+                        DeathRate = 50
                     },
                     new Diagnosis
                     {
-                        Title = "d2",
-                        DeathRate = 13
+                        Title = "tuberculosis",
+                        DeathRate = 66
                     },
                     new Diagnosis
                     {
-                        Title = "d3",
-                        DeathRate = 89
+                        Title = "blood cancer",
+                        DeathRate = 84
+                    },
+                    new Diagnosis
+                    {
+                        Title = "narcolepsy",
+                        DeathRate = 47
+                    },
+                    new Diagnosis
+                    {
+                        Title = "schizophrenia",
+                        DeathRate = 7
+                    },
+                    new Diagnosis 
+                    {
+                        Title = "lupis",
+                        DeathRate = 65
                     }
+
                 );
                 context.SaveChanges();
             }
@@ -36,27 +52,27 @@ namespace Hospital
                 context.Doctors.AddRange(
                     new Doctors
                     {
-                        Name = "q1",
-                        Speciality = "doctor1",
-                        Skill = 12
+                        Name = "Tom",
+                        Speciality = "Pulmonologist",
+                        Skill = 54
                     },
                     new Doctors
                     {
-                        Name = "q2",
-                        Speciality = "doctor2",
-                        Skill = 13
+                        Name = "Hamilton",
+                        Speciality = "Psychiatrist",
+                        Skill = 67
                     },
                     new Doctors
                     {
-                        Name = "q3",
-                        Speciality = "doctor3",
-                        Skill = 14
+                        Name = "James",
+                        Speciality = "Oncologist",
+                        Skill = 70
                     },
                     new Doctors
                     {
-                        Name = "q3",
-                        Speciality = "doctor3",
-                        Skill = 14
+                        Name = "Alexceander",
+                        Speciality = "Rheumatologist",
+                        Skill = 50
                     }
                 );
                 context.SaveChanges();
