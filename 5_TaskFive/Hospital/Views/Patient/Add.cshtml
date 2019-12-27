@@ -3,39 +3,26 @@
 }
 @using Hospital.ViewModels
 @using Hospital.Models
-@model List<Diagnosis>
+@model AddPatientVM
 
 <h2>Form of adding patient</h2>
 
-<form method="post" class="form-horizontal" role="form">
-    <p>fill in the following fields:</p>
-    <div class="form-group">
-        <label for="User" class="col-md-2 control-label">Name:</label>
-        <div class="col-md-4">
-            <input type="text" name="Name" class="form-control" />
+<p>fill in the following fields:</p>
+<form asp-controller="Patient" asp-action="Add" asp-antiforgery="true">
+    <div>
+        <div>
+            <label asp-for="Name"></label>
+            <input type="text" asp-for="Name" />
         </div>
-    </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label">Diagnosis:</label>
-        <select name="DiagnosisId" class="form-control">
-            @foreach (Diagnosis d in Model)
-            {
-                <option value="@d.Id">@d.Title</option>
-            }
-        </select>
-    </div>
-    <div class="form-group">
-        <div class="container">
-            <div class="row">
-                <div class="col-offset-2 col-3">
-                    <input type="submit" class="btn btn-success" value="Confirm" />
-                </div>
-                <div class="col">
-                    <button type="button" class="btn btn-danger">
-                        <a href="~/Patient" style="color:inherit">Cancel</a>
-                    </button>
-                </div>
-            </div>
+        <div>
+            <label asp-for="DiagnosisId"></label>
+            <select asp-for="DiagnosisId" asp-items="ViewBag.Diagnoses"></select>
+        </div>
+        <div>
+            <input type="submit" class="btn btn-success" value="Confirm" />
+            <button type="button" class="btn btn-danger">
+                <a asp-controller="Patient" asp-action="Index" style="color:inherit">Cancel</a>
+            </button>
         </div>
     </div>
 </form>

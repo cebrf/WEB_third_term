@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Hospital.Models;
 using Hospital.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Hospital.Controllers
 {
@@ -39,7 +40,8 @@ namespace Hospital.Controllers
         [HttpGet]
         public IActionResult Add()
         {
-            return View(db.Diagnoses.ToList());
+            ViewBag.Diagnoses = new SelectList(db.Diagnoses.ToList(), "Id", "Title");
+            return View();
         }
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
