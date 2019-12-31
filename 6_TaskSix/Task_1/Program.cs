@@ -31,13 +31,11 @@ namespace Task_1
         {
             using (ApplicationContext db = new ApplicationContext())
             {
-                // создаем два объекта Patient
                 Patient Patient1 = new Patient { Name = "Tom", Age = 33, Diagnosis= "tuberculosis" };
                 Patient Patient2 = new Patient { Name = "Mark", Age = 26, Diagnosis = "pneumonia" };
                 Patient Patient3 = new Patient { Name = "Andrew", Age = 26, Diagnosis = "schizophrenia" };
                 Patient Patient4 = new Patient { Name = "Stive", Age = 26, Diagnosis = "blood cancer" };
 
-                // добавляем их в бд
                 if (!db.Patients.Any())
                 {
                     db.Patients.Add(Patient1);
@@ -46,8 +44,6 @@ namespace Task_1
                     db.Patients.Add(Patient4);
                     db.SaveChanges();
                 }
-
-                // получаем объекты из бд и выводим на консоль
                 var Patients = db.Patients.ToList();
                 Console.WriteLine("Patients list:");
                 foreach (Patient u in Patients)
