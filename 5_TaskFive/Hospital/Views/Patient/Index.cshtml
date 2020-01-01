@@ -43,16 +43,6 @@ Diagnosis
     }
 </table>
 <br />
-<div class="container">
-    <div class="row mt-2">
-        <div class="col-3">
-            <button type="button" class="btn btn-primary">
-                <a href="~/Patient/Add/" style="color: inherit">Add new</a>
-            </button>
-        </div>
-    </div>
-</div>
-<br />
 @if (Model.PageViewModel.HasPreviousPage)
 {
     <a asp-action="Index"
@@ -75,3 +65,13 @@ Diagnosis
         <i class="glyphicon glyphicon-chevron-right"></i>
     </a>
 }
+<br />
+<div class="container">
+    <div class="row mt-2">
+        <div class="col-3">
+            <button type="button" class="btn btn-primary">
+                <a href="~/Patient/Add/" style="color: inherit">Add new</a>
+            </button>
+        </div>
+    </div>
+</div>
