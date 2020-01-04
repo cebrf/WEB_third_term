@@ -1,0 +1,269 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<script src="~/js/jquery-1.7.1.min.js"></script>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <table id="tblPatients" class="table" cellpadding="0" cellspacing="0">
+        <thead>
+            <tr>
+                <th style="width:100px">Customer Id</th>
+                <th style="width:150px">Name</th>
+                <th style="width:150px">Diagnosis</th>
+                <th style="width:150px"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="Id">
+                    <span></span>
+                </td>
+                <td class="Name">
+                    <span></span>
+                    <input type="text" value="" style="display:none" />
+                </td>
+                <td class="Diagnosis">
+                    <span></span>
+                    <input type="text" value="" style="display:none" />
+                </td>
+                <td>
+                    <a class="Edit" href="javascript:;">Edit</a>
+                    <a class="Update" href="javascript:;" style="display:none">Update</a>
+                    <a class="Cancel" href="javascript:;" style="display:none">Cancel</a>
+                    <a class="Delete" href="javascript:;">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td style="width: 150px" class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" />
+            </td>
+            <td style="width: 150px" class="form-group">
+                <label for="diagnosis">Diagnosis</label>
+                <input type="text" class="form-control" id="diagnosis" />
+            </td>
+            <td style="width: 200px">
+                <br />
+                <input type="button" id="create" value="Create" />
+            </td>
+        </tr>
+    </table>
+    <div>
+        <input type="text" class="form-control" id="postResult" />
+        <button class="btn btn-default" style="width:140px" id="getPeople">Get People</button>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            //Remove the dummy row if data present.
+            if ($("#tblPatients tr").length > 2) {
+                $("#tblPatients tr:eq(1)").remove();
+            } else {
+                var row = $("#tblPatients tbody tr:last-child");
+                row.find(".Edit").hide();
+                row.find(".Delete").hide();
+                row.find("span").html('&nbsp;');
+            }
+        });
+        function AppendRow(row, Id, Name, Diagnosis) {
+            //Bind CustomerId.
+            $(".Id", row).find("span").html(Id);
+
+            //Bind Name.
+            $(".Name", row).find("span").html(Name);
+            $(".Name", row).find("input").val(Name);
+
+            //Bind Diagnosis.
+            $(".Diagnosis", row).find("span").html(Diagnosis);
+            $(".Diagnosis", row).find("input").val(Diagnosis);
+
+            row.find(".Edit").show();
+            row.find(".Delete").show();
+
+            $("#tblPatients").append(row);
+        };
+
+
+
+        $('#getPeople').click(function (e) {
+            $("#tblPatients").find("tr:gt(1)").remove();
+
+            $("#postResult").val("");
+            $.ajax({
+                contentType: 'application/json',
+                type: "GET",
+                url: "api/Patients",
+                success: function (data, textStatus, jqXHR) {
+                    data.forEach(function (person) {
+                        var row = $("#tblPatients tbody tr:last-child");
+                        row = row.clone();
+                        AppendRow(row, person.id, person.name, person.diagnosis);
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("#postResult").val(jqXHR.statusText);
+                }
+            });
+        });
+        
+        //Add event handler.
+        $('#create').click(function (e) {
+            $.ajax({
+                contentType: 'application/json',
+                type: "POST",
+                url: "api/Patients",
+                data: JSON.stringify({
+                    name: document.getElementById('name').value,
+                    diagnosis: document.getElementById('diagnosis').value
+                }),
+                success: function (person) {
+                    var row = $("#tblPatients tbody tr:last-child");
+                    row = row.clone();
+                    AppendRow(row, person.id, person.name, person.diagnosis);
+
+                    $("#name").val();
+                    $("#diagnosis").val();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("#postResult").val(jqXHR.statusText);
+                }
+            });
+        });
+
+        //Edit event handler.
+        $("body").on("click", "#tblPatients .Edit", function () {
+            var row = $(this).closest("tr");
+            $("td", row).each(function () {
+                if ($(this).find("input").length > 0) {
+                    $(this).find("input").show();
+                    $(this).find("span").hide();
+                }
+            });
+            row.find(".Update").show();
+            row.find(".Cancel").show();
+            row.find(".Delete").hide();
+            $(this).hide();
+        });
+
+        //Update event handler.
+        $("body").on("click", "#tblPatients .Update", function () {
+            var row = $(this).closest("tr");
+            $("td", row).each(function () {
+                if ($(this).find("input").length > 0) {
+                    var span = $(this).find("span");
+                    var input = $(this).find("input");
+                    span.html(input.val());
+                    span.show();
+                    input.hide();
+                }
+            });
+            row.find(".Edit").show();
+            row.find(".Delete").show();
+            row.find(".Cancel").hide();
+            $(this).hide();
+
+            var item = {};
+            item.Id = parseInt(row.find(".Id").find("span").html());
+            item.Name = row.find(".Name").find("span").html();
+            item.Diagnosis = row.find(".Diagnosis").find("span").html();
+            $.ajax({
+                type: "PUT",
+                url: "api/Patients/" + item.Id,
+                data: JSON.stringify(item),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            });
+        });
+
+        //Cancel event handler.
+        $("body").on("click", "#tblPatients .Cancel", function () {
+            var row = $(this).closest("tr");
+            $("td", row).each(function () {
+                if ($(this).find("input").length > 0) {
+                    var span = $(this).find("span");
+                    var input = $(this).find("input");
+                    input.val(span.html());
+                    span.show();
+                    input.hide();
+                }
+            });
+            row.find(".Edit").show();
+            row.find(".Delete").show();
+            row.find(".Update").hide();
+            $(this).hide();
+        });
+
+        //Delete event handler.
+        $("body").on("click", "#tblPatients .Delete", function () {
+            if (confirm("Do you want to delete this row?")) {
+                var row = $(this).closest("tr");
+                var item = {};
+                item.Id = row.find("span").html();
+                $.ajax({
+                    type: "DELETE",
+                    url: "/api/Patients/" + item.Id,
+                    data: JSON.stringify(item),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if ($("#tblPatients tr").length > 2) {
+                            row.remove();
+                        } else {
+                            row.find(".Edit").hide();
+                            row.find(".Delete").hide();
+                            row.find("span").html('&nbsp;');
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        $("#postResult").val(jqXHR.statusText);
+                    }
+                });
+            }
+        });
+    </script>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <h2>Get a Person</h2>
+                <div class="form-group">
+                    <label for="id">Id</label>
+                    <input type="text" class="form-control" id="id" />
+                </div>
+                <div>
+                    <button class="btn btn-default" id="getPerson">Get</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        $('#getPerson').click(function (e) {
+            $("#getPersonResult").val("");
+            $("#tblPatients").find("tr:gt(1)").remove();
+            $.ajax({
+                contentType: 'application/json',
+                type: "GET",
+                url: "api/Patients/" + $("#id").val(),
+                success: function (person, textStatus, jqXHR) {
+                    var row = $("#tblPatients tbody tr:last-child");
+                    row = row.clone();
+                    AppendRow(row, person.id, person.name, person.diagnosis);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("#postResult").val(jqXHR.statusText);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
