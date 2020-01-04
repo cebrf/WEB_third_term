@@ -9,8 +9,8 @@ using Task.Data;
 namespace Task.Migrations
 {
     [DbContext(typeof(PatientContext))]
-    [Migration("20200104074756_UpdateTable")]
-    partial class UpdateTable
+    [Migration("20200104082423_Initialization")]
+    partial class Initialization
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -36,32 +36,6 @@ namespace Task.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Patient");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Diagnosis = "pneumonia",
-                            Name = "Mark"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Diagnosis = "tuberculosis",
-                            Name = "Hamilton"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Diagnosis = "blood cancer",
-                            Name = "James"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Diagnosis = "schizophrenia",
-                            Name = "Alexceander"
-                        });
                 });
 #pragma warning restore 612, 618
         }

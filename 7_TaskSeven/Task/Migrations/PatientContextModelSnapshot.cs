@@ -59,6 +59,12 @@ namespace Task.Migrations
                             Id = 4,
                             Diagnosis = "schizophrenia",
                             Name = "Alexceander"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Diagnosis = "pneumonia",
+                            Name = "Arthur"
                         });
                 });
 #pragma warning restore 612, 618

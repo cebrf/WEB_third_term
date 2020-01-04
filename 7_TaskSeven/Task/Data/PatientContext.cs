@@ -47,6 +47,12 @@ namespace Task.Data
                     Id = 4,
                     Name = "Alexceander",
                     Diagnosis = "schizophrenia"
+                },
+                new Patient
+                {
+                    Id = 5,
+                    Name = "Arthur",
+                    Diagnosis = "pneumonia"
                 }
             );
         }

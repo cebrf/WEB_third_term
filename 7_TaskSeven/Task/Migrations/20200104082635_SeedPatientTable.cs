@@ -2,7 +2,7 @@
 
 namespace Task.Migrations
 {
-    public partial class SeedPatientsTable : Migration
+    public partial class SeedPatientTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,8 @@ namespace Task.Migrations
                     { 1, "pneumonia", "Mark" },
                     { 2, "tuberculosis", "Hamilton" },
                     { 3, "blood cancer", "James" },
-                    { 4, "schizophrenia", "Alexceander" }
+                    { 4, "schizophrenia", "Alexceander" },
+                    { 5, "pneumonia", "Arthur" }
                 });
         }
 
@@ -39,6 +40,11 @@ namespace Task.Migrations
                 table: "Patient",
                 keyColumn: "Id",
                 keyValue: 4);
+
+            migrationBuilder.DeleteData(
+                table: "Patient",
+                keyColumn: "Id",
+                keyValue: 5);
         }
     }
 }

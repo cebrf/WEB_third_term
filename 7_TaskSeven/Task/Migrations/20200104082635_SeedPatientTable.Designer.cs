@@ -9,8 +9,8 @@ using Task.Data;
 namespace Task.Migrations
 {
     [DbContext(typeof(PatientContext))]
-    [Migration("20200104052830_SeedPatientsTable")]
-    partial class SeedPatientsTable
+    [Migration("20200104082635_SeedPatientTable")]
+    partial class SeedPatientTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -61,6 +61,12 @@ namespace Task.Migrations
                             Id = 4,
                             Diagnosis = "schizophrenia",
                             Name = "Alexceander"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Diagnosis = "pneumonia",
+                            Name = "Arthur"
                         });
                 });
 #pragma warning restore 612, 618
